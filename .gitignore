@@ -2,8 +2,9 @@
 
 node_modules
 
-appPrimero.js
-
 conexionTest.js
 
+.gitignore
+
+.env
 
