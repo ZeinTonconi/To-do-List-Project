@@ -1,8 +1,11 @@
 
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { tasksGet, tasksPost } = require('../controllers/tasks');
+const { tasksGet, tasksPost, tasksDelete } = require('../controllers/tasks');
+const { isTaskInDB } = require('../helpers/dbValidator');
 const { validateCamp } = require('../middlewares/validateCamps');
+
+
 
 const router = Router();
   
@@ -28,12 +31,12 @@ router.put('/:id/complete', (req, res) => {
     })
 })
 
-router.delete('/:id', (req, res) => {
-    const { id } = req.params;
-    res.json({
-        msg: `Delete - Elimiar tarea ${id}`
-    })
-})
+router.delete('/:id',[
+    check('id').isNumeric(),
+    validateCamp,
+    isTaskInDB,
+    validateCamp
+],tasksDelete)
 
 
 module.exports = router
