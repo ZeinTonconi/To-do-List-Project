@@ -1,16 +1,12 @@
 
 const { Router } = require('express');
+const { tasksGet } = require('../controllers/tasks');
 const { dbConnection } = require('../database/config');
 
 const router = Router();
   
 
-router.get('/', (req, res) => {
-    console.log(req.pool)
-    res.json({
-        msg: 'Get - tasks'
-    })
-})
+router.get('/', tasksGet);
 
 router.post('/', (req, res) => {
     res.json({
