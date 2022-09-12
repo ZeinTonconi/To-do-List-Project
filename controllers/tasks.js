@@ -13,7 +13,7 @@ const tasksGet = async (req, res) => {
                 console.log(err);
                 throw err;
             }
-            res.status(400).json({
+            res.status(200).json({
                 result
             });
             connection.release();

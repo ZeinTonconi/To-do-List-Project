@@ -1,0 +1,29 @@
+{
+	"info": {
+		"_postman_id": "25b3a30f-e2ee-4e46-bf4a-87873e3baaa4",
+		"name": "To-do List",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23047708"
+	},
+	"item": [
+		{
+			"name": "GET - Tasks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/tasks",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
