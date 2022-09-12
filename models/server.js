@@ -11,8 +11,11 @@ class Server {
     constructor() {
         this.port = process.env.PORT;
         this.app = express();
+        this.taskPath = '/api/tasks';
+        
         this.connectDB();
         this.middlewares();
+        this.routes();
     }
 
     async connectDB() {
@@ -26,6 +29,10 @@ class Server {
         this.app.use(express.json());
 
         this.app.use(express.static('public'))
+    }
+
+    routes(){
+        this.app.use(this.taskPath,require('../routes/tasks.js'));      
     }
 
     start(){
