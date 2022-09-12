@@ -1,18 +1,18 @@
 
 const { Router } = require('express');
-const { tasksGet } = require('../controllers/tasks');
-const { dbConnection } = require('../database/config');
+const { check } = require('express-validator');
+const { tasksGet, tasksPost } = require('../controllers/tasks');
+const { validateCamp } = require('../middlewares/validateCamps');
 
 const router = Router();
   
 
 router.get('/', tasksGet);
 
-router.post('/', (req, res) => {
-    res.json({
-        msg: 'Post - tasks'
-    })
-})
+router.post('/', [
+    check('descr','La Tarea necesita una descripcion').notEmpty(),
+    validateCamp
+], tasksPost )
 
 router.put('/:id', (req, res) => {
     const { id } = req.params;
