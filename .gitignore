@@ -1,10 +1,10 @@
 
 
-node_modules
+/node_modules/
 
-conexionTest.js
+/conexionTest.js
 
-.gitignore
+/.gitignore
 
-.env
+/.env
 
