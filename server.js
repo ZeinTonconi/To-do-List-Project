@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const mysql = require('mysql');
-const { dbConnection } = require('../database/config');
+const { dbConnection } = require('./database/config');
 const cors = require('cors');
 
 
@@ -36,7 +36,7 @@ class Server {
                 req.pool = this.pool;
                 next();
             }
-        ],require('../routes/tasks.js'));      
+        ],require('./routes/tasks.js'));      
     }
 
     start(){
