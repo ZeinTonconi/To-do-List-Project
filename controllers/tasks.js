@@ -65,8 +65,9 @@ const tasksDelete = async (req, res) => {
             })
         })
     })
-    
 }
+
+
 
 const putTask = async(req,res) =>{
     const {pool,params,body} = req;
@@ -78,7 +79,6 @@ const putTask = async(req,res) =>{
             throw (err);
         }
         const updateQuery = `UPDATE tasks SET description = "${newDescri}" WHERE id_task = ${id}`;
-        console.log(updateQuery)
         connection.query(updateQuery, (err,result) => {
             if(err) {
                 console.log(err);
@@ -91,9 +91,31 @@ const putTask = async(req,res) =>{
     })
 }
 
+const putCompleteTask = async(req,res) =>{
+    const {pool,params} = req;
+    const {id} = params;
+    pool.getConnection( (err,connection) => {
+        if(err){
+            console.log(err);
+            throw (err);
+        }
+        const completeQuery = `update tasks set status = !status  where id_task=${id};`;
+        connection.query(completeQuery, (err,result) => {
+            if(err) {
+                console.log(err);
+                throw(err);
+            }
+            res.status(200).json({
+                msg: `La Tarea con id_tasks = ${id} fue actualizada`,
+            })
+        })
+    })
+}
+
 module.exports = {
     tasksGet,
     tasksPost,
     tasksDelete,
-    putTask
+    putTask,
+    putCompleteTask
 }
