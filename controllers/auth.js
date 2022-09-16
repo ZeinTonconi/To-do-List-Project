@@ -1,19 +1,27 @@
+const { generateJWT } = require("../helpers/generateJWT");
 
 
-const login = (req, res) => {
-    const {user} = req;
-    const {email,password} = req.body;
+const login = async (req, res) => {
+    const { user } = req;
+    const { email, password } = req.body;
 
-    console.log(user.password,email,password)
-
-    if(user.password !== password){
+    if (user.password !== password) {
         return res.status(400).json({
             msg: "Contrasena incorrecta"
         })
     }
-    res.status(200).json({
-        mst: "Logged in"
-    })
+    try {
+        const token = await generateJWT(user.id_user);
+        const {id_user} = user;
+        res.status(200).json({
+            mst: "Logged in",
+            //user.id_user,
+            id_user,
+            token
+        })
+    } catch (error) {
+
+    }
 
 }
 
