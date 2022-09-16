@@ -12,6 +12,7 @@ class Server {
         this.port = process.env.APP_PORT;
         this.app = express();
         this.taskPath = '/api/tasks';
+        this.authPath = '/api/auth';
         this.connectDB();
         this.middlewares();
         this.routes();
@@ -36,7 +37,8 @@ class Server {
                 req.pool = this.pool;
                 next();
             }
-        ],require('./routes/tasks.js'));      
+        ],require('./routes/tasks.js'));
+        this.app.use(this.authPath,require('./routes/auth.js'));
     }
 
     start(){

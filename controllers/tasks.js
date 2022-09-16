@@ -99,7 +99,7 @@ const putCompleteTask = async(req,res) =>{
             console.log(err);
             throw (err);
         }
-        const completeQuery = `update tasks set status = !status  where id_task=${id};`;
+        const completeQuery = `update tasks set status = not status  where id_task=${id};`;
         connection.query(completeQuery, (err,result) => {
             if(err) {
                 console.log(err);
