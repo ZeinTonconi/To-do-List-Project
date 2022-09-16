@@ -38,7 +38,13 @@ class Server {
                 next();
             }
         ],require('./routes/tasks.js'));
-        this.app.use(this.authPath,require('./routes/auth.js'));
+        this.app.use(this.authPath,[
+            (req,res,next) => {
+                req.pool = this.pool;
+                next();
+            }
+
+        ],require('./routes/auth.js'));
     }
 
     start(){
