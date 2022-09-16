@@ -14,7 +14,7 @@ const isTaskInDB = async (req, res, next) => {
         connection.query(queryExist, (err, result) => {
             
             if (result.length===0) {
-                return res.status(401).json({
+                return res.status(404).json({
                     msg: `La tarea con id ${id} no existe en la DB`
                 });
             }
