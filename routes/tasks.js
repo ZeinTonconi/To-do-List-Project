@@ -1,7 +1,7 @@
 
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { tasksGet, tasksPost, tasksDelete } = require('../controllers/tasks');
+const { tasksGet, tasksPost, tasksDelete, putTask } = require('../controllers/tasks');
 const { isTaskInDB } = require('../helpers/dbValidator');
 const { validateCamp } = require('../middlewares/validateCamps');
 
@@ -17,12 +17,11 @@ router.post('/', [
     validateCamp
 ], tasksPost )
 
-router.put('/:id', (req, res) => {
-    const { id } = req.params;
-    res.json({
-        msg: `Put - Actualizar tarea ${id}`
-    })
-})
+router.put('/:id', [
+    check('id',"El id no es valido").isNumeric(),
+    validateCamp,
+    isTaskInDB
+], putTask)
 
 router.put('/:id/complete', (req, res) => {
     const { id } = req.params;

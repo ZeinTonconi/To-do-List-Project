@@ -31,7 +31,7 @@ const tasksPost = async (req,res) => {
             console.log(err);
             throw err;
         }
-        const insertQuery=`INSERT INTO tasks (description, status) VALUES ("${descr}",true)`;
+        const insertQuery=`INSERT INTO tasks (description, status) VALUES ("${descr}",false)`;
         connection.query(insertQuery, (err,result) => {
             if(err){
                 console.log(err);
@@ -68,8 +68,32 @@ const tasksDelete = async (req, res) => {
     
 }
 
+const putTask = async(req,res) =>{
+    const {pool,params,body} = req;
+    const {id} = params;
+    const {newDescri} = body;
+    pool.getConnection( (err,connection) => {
+        if(err){
+            console.log(err);
+            throw (err);
+        }
+        const updateQuery = `UPDATE tasks SET description = "${newDescri}" WHERE id_task = ${id}`;
+        console.log(updateQuery)
+        connection.query(updateQuery, (err,result) => {
+            if(err) {
+                console.log(err);
+                throw(err);
+            }
+            res.status(200).json({
+                msg: `La Tarea con id_tasks = ${id} fue actualizada`
+            })
+        })
+    })
+}
+
 module.exports = {
     tasksGet,
     tasksPost,
-    tasksDelete
+    tasksDelete,
+    putTask
 }
