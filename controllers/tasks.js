@@ -14,7 +14,8 @@ const tasksGet = async (req, res) => {
                 throw err;
             }
             res.status(200).json({
-                result
+                ...result
+
             });
             connection.release();
         });
@@ -36,8 +37,10 @@ const tasksPost = async (req,res) => {
                 console.log(err);
                 throw err;
             }
+            const {insertId}=result;
             res.status(201).json({
-                result
+                msg: `Tarea creada con el task_id ${insertId}`,
+                task_id: insertId
             })
         })
     })
@@ -58,7 +61,7 @@ const tasksDelete = async (req, res) => {
                 throw err;
             }
             res.status(200).json({
-                result
+                msg: `La tarea con id ${id} se elimino correctamente`
             })
         })
     })

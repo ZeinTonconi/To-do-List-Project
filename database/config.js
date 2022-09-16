@@ -12,7 +12,6 @@ const configDB = {
 };
 
 const dbConnection = async () => {
-    console.log(configDB);
     try {
         const connection = mysql.createConnection(configDB);
         connection.connect(err => {
