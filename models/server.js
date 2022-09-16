@@ -9,7 +9,7 @@ const cors = require('cors');
 class Server {
 
     constructor() {
-        this.port = process.env.PORT;
+        this.port = process.env.APP_PORT;
         this.app = express();
         this.taskPath = '/api/tasks';
         this.connectDB();

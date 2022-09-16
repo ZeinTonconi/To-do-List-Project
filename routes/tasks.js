@@ -34,8 +34,7 @@ router.put('/:id/complete', (req, res) => {
 router.delete('/:id',[
     check('id').isNumeric(),
     validateCamp,
-    isTaskInDB,
-    validateCamp
+    isTaskInDB
 ],tasksDelete)
 
 
