@@ -13,9 +13,11 @@ router.post('/',[
     validateCamp
 ],categoryPost)
 
-router.delete('/',[
-    check('id_category','Se necesita el id de la categoria').notEmpty(),
+router.delete('/:id',[
+    check('id','Se necesita el id de la categoria').notEmpty(),
     validateCamp
 ],categoryDelete)
+
+
 
 module.exports = router;
