@@ -25,13 +25,13 @@ const tasksGet = (req, res) => {
 
 const tasksPost = (req,res) => {
     const {pool} = req;
-    const {descr} = req.body;
+    const {descr, category} = req.body;
     pool.getConnection((err,connection) => {
         if(err){
             console.log(err);
             throw err;
         }
-        const insertQuery=`INSERT INTO tasks (description, status) VALUES ("${descr}",false)`;
+        const insertQuery=`INSERT INTO tasks (description, id_category, status) VALUES ("${descr}","${category}",false)`;
         connection.query(insertQuery, (err,result) => {
             if(err){
                 console.log(err);
@@ -40,7 +40,10 @@ const tasksPost = (req,res) => {
             const {insertId}=result;
             res.status(201).json({
                 msg: `Tarea creada con el task_id ${insertId}`,
-                task_id: insertId
+                task_id: insertId,
+                descr,
+                category,
+                status: false
             })
         })
     })

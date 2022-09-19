@@ -14,6 +14,7 @@ router.get('/', tasksGet);
 
 router.post('/', [
     check('descr','La Tarea necesita una descripcion').notEmpty(),
+    check('category', 'La Tarea necesita una categoria').notEmpty(),
     validateCamp
 ], tasksPost )
 
