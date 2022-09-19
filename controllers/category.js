@@ -47,7 +47,29 @@ const categoryPost = (req, res) => {
 
 }
 
+
+const categoryDelete = (req,res) => {
+    const {pool} = req;
+    const {id_category} = req.body;
+    pool.getConnection((err,connection) => {
+        if(err){
+            console.log(err);
+            throw err;
+        }
+        const deleteQuery=`DELETE from categories where id="${id_category}"`;
+        connection.query(deleteQuery, (err,result) => {
+            if(err){
+                console.log(err);
+                throw err;
+            }
+            res.status(200).json({
+                msg: "Se elimino exitosamente la categoria"
+            })
+        })
+    })
+}
 module.exports = {
     categoryGet,
-    categoryPost
+    categoryPost,
+    categoryDelete
 }
