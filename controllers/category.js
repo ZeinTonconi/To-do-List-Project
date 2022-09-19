@@ -25,7 +25,7 @@ const categoryGet = (req, res) => {
 
 const categoryPost = (req, res) => {
     const { pool } = req;
-    const {category} = req.body;
+    const { category } = req.body;
     pool.getConnection((err, connection) => {
         if (err) {
             console.log(err);
@@ -48,17 +48,17 @@ const categoryPost = (req, res) => {
 }
 
 
-const categoryDelete = (req,res) => {
-    const {pool} = req;
-    const {id} = req.params;
-    pool.getConnection((err,connection) => {
-        if(err){
+const categoryDelete = (req, res) => {
+    const { pool } = req;
+    const { id } = req.params;
+    pool.getConnection((err, connection) => {
+        if (err) {
             console.log(err);
             throw err;
         }
-        const deleteQuery=`DELETE from categories where id="${id}"`;
-        connection.query(deleteQuery, (err,result) => {
-            if(err){
+        const deleteQuery = `DELETE from categories where id="${id}"`;
+        connection.query(deleteQuery, (err, result) => {
+            if (err) {
                 console.log(err);
                 throw err;
             }
@@ -68,8 +68,31 @@ const categoryDelete = (req,res) => {
         })
     })
 }
+
+const categoryPut = (req, res) => {
+    const { pool } = req;
+    const { id } = req.params;
+    const { newCategory} = req.body;
+    pool.getConnection((err,connection)=> {
+        if(err){
+            console.log(err);
+            throw err;
+        }
+        const updateQuery = `UPDATE categories SET category = "${newCategory}" where id="${id}"`;
+        connection.query(updateQuery, (err,result) => {
+            if(err){
+                console.log(err);
+                throw err;
+            }
+            res.status(200).json({
+                msg: `Se actualizo la categoria con id: ${id} por ${newCategory}`
+            })
+        })
+    })
+}
 module.exports = {
     categoryGet,
     categoryPost,
-    categoryDelete
+    categoryDelete,
+    categoryPut
 }

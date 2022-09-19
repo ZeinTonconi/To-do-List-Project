@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { categoryGet, categoryPost, categoryDelete } = require("../controllers/category");
+const { categoryGet, categoryPost, categoryDelete, categoryPut } = require("../controllers/category");
 const {check} = require('express-validator');
 const { validateCamp } = require("../middlewares/validateCamps");
 
@@ -18,6 +18,10 @@ router.delete('/:id',[
     validateCamp
 ],categoryDelete)
 
-
+router.put('/:id',[
+    check('id','Se necesita el id de la categoria').notEmpty(),
+    check('newCategory','La nueva categoria no puede estar vacia').notEmpty(),
+    validateCamp
+],categoryPut)
 
 module.exports = router;
