@@ -15,10 +15,6 @@ class Server {
         this.authPath = '/api/auth';
         this.categoryPath = '/api/category';
         this.init();
-
-       // this.connectDB();
-        //this.middlewares();
-        //this.routes();
     }
 
     async connectDB() {
