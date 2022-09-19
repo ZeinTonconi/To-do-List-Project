@@ -1,6 +1,6 @@
 
 
-const tasksGet = async (req, res) => {
+const tasksGet = (req, res) => {
 
     const { pool} = req;
     pool.getConnection((err,connection) => {
@@ -23,7 +23,7 @@ const tasksGet = async (req, res) => {
     })
 }
 
-const tasksPost = async (req,res) => {
+const tasksPost = (req,res) => {
     const {pool} = req;
     const {descr} = req.body;
     pool.getConnection((err,connection) => {
@@ -46,7 +46,7 @@ const tasksPost = async (req,res) => {
     })
 }
 
-const tasksDelete = async (req, res) => {
+const tasksDelete = (req, res) => {
     const {id} = req.params;
     const {pool} =req;
     pool.getConnection((err,connection) => {
@@ -69,7 +69,7 @@ const tasksDelete = async (req, res) => {
 
 
 
-const putTask = async(req,res) =>{
+const putTask = (req,res) =>{
     const {pool,params,body} = req;
     const {id} = params;
     const {newDescri} = body;
@@ -91,7 +91,7 @@ const putTask = async(req,res) =>{
     })
 }
 
-const putCompleteTask = async(req,res) =>{
+const putCompleteTask = (req,res) =>{
     const {pool,params} = req;
     const {id} = params;
     pool.getConnection( (err,connection) => {

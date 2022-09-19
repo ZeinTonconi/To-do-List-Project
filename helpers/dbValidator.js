@@ -1,5 +1,5 @@
 
-const isTaskInDB = async (req, res, next) => {
+const isTaskInDB = (req, res, next) => {
     const { id } = req.params;
     
     const { pool } = req;
@@ -23,7 +23,7 @@ const isTaskInDB = async (req, res, next) => {
     })
 }
 
-const isUserInDB = async (req,res,next) => {
+const isUserInDB =  (req,res,next) => {
     const { pool } = req;
     const {email} = req.body;
         pool.getConnection((err, connection) => {

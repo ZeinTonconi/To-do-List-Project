@@ -11,7 +11,7 @@ const configDB = {
     port: process.env.DB_PORT
 };
 
-const dbConnection = async () => {
+const dbConnection = () => {
     try {
         const connection = mysql.createConnection(configDB);
         connection.connect(err => {
