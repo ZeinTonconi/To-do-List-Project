@@ -44,7 +44,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"descr\": \"Llamar a \"\n}",
+					"raw": "{\n    \"descr\": \"Llamar a \",\n    \"category\": \"Social\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -71,7 +71,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/tasks/7",
+					"raw": "localhost:8080/api/tasks/10",
 					"host": [
 						"localhost"
 					],
@@ -79,7 +79,7 @@
 					"path": [
 						"api",
 						"tasks",
-						"7"
+						"10"
 					]
 				}
 			},
@@ -159,6 +159,111 @@
 						"api",
 						"auth",
 						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET - Obtener todas las categorias",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/category",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST - Crear Categoria",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"category\": \"Trabajo\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/category",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE - Category por id_category",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/category/aaaaaaa",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"category",
+						"aaaaaaa"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT - Actualizar el nombre de una categoria",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"newCategory\" : \"xD\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/category/aaaaaab",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"category",
+						"aaaaaab"
 					]
 				}
 			},
