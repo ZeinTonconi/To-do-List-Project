@@ -13,16 +13,25 @@ class Server {
         this.app = express();
         this.taskPath = '/api/tasks';
         this.authPath = '/api/auth';
-        this.connectDB();
-        this.middlewares();
-        this.routes();
+        this.categoryPath = '/api/category';
+        this.init();
+
+       // this.connectDB();
+        //this.middlewares();
+        //this.routes();
     }
 
     async connectDB() {
         this.pool = await dbConnection();
     }
 
-    middlewares(){
+    async init() {
+        this.pool = await dbConnection();
+        this.middlewares();
+        this.routes();
+    }
+
+    middlewares() {
 
         this.app.use(cors());
 
@@ -31,24 +40,26 @@ class Server {
         this.app.use(express.static('public'))
     }
 
-    routes(){
-        this.app.use(this.taskPath,[
-            (req,res,next) => {
-                req.pool = this.pool;
-                next();
-            }
-        ],require('./routes/tasks.js'));
-        this.app.use(this.authPath,[
-            (req,res,next) => {
-                req.pool = this.pool;
-                next();
-            }
-
-        ],require('./routes/auth.js'));
+     getPool = (req, res, next) => {
+        req.pool = this.pool;
+        next();
     }
 
-    start(){
-        this.app.listen(this.port, ()=> {
+    routes() {
+        this.app.use(this.taskPath, [
+            this.getPool
+        ], require('./routes/tasks.js'));
+        this.app.use(this.authPath, [
+            this.getPool
+        ], require('./routes/auth.js'));
+
+        this.app.use(this.categoryPath, [
+            this.getPool
+        ], require('./routes/category'));
+    }
+
+    start() {
+        this.app.listen(this.port, () => {
             console.log(`Server online on port ${this.port}`);
         })
     }
