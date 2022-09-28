@@ -3,16 +3,16 @@ const { ulid } = require("ulid");
 
 const tasksGet = (req, res) => {
 
-    const { pool} = req;
-    pool.getConnection((err,connection) => {
-        if(err){
+    const { pool } = req;
+    pool.getConnection((err, connection) => {
+        if (err) {
             console.log(err);
             throw err;
         }
         connection.query(`select 
                         tasks.id id_task, categories.id id_category, description, status, categories.category
                         from tasks right join categories on tasks.id_category = categories.id`, (err, result) => {
-            if(err){
+            if (err) {
                 console.log(err);
                 throw err;
             }
@@ -29,18 +29,18 @@ const tasksGet = (req, res) => {
 
 
 
-const tasksPost = (req,res) => {
-    const {pool} = req;
-    const {descr, id_category} = req.body;
-    pool.getConnection((err,connection) => {
-        if(err){
+const tasksPost = (req, res) => {
+    const { pool } = req;
+    const { descr, id_category } = req.body;
+    pool.getConnection((err, connection) => {
+        if (err) {
             console.log(err);
             throw err;
         }
-        const id_task=ulid();
-        const insertQuery=`INSERT INTO tasks (id,description, id_category, status) VALUES ("${id_task}","${descr}","${id_category}",false)`;
-        connection.query(insertQuery, (err,result) => {
-            if(err){
+        const id_task = ulid();
+        const insertQuery = `INSERT INTO tasks (id,description, id_category, status) VALUES ("${id_task}","${descr}","${id_category}",false)`;
+        connection.query(insertQuery, (err, result) => {
+            if (err) {
                 console.log(err);
                 throw err;
             }
@@ -55,16 +55,16 @@ const tasksPost = (req,res) => {
 }
 
 const tasksDelete = (req, res) => {
-    const {id} = req.params;
-    const {pool} =req;
-    pool.getConnection((err,connection) => {
-        if(err){
+    const { id } = req.params;
+    const { pool } = req;
+    pool.getConnection((err, connection) => {
+        if (err) {
             console.log(err);
-            throw(err);
+            throw (err);
         }
-        const deleteQuery=`DELETE FROM tasks WHERE id="${id}";`;
-        connection.query(deleteQuery,(err,result)=> {
-            if(err){
+        const deleteQuery = `DELETE FROM tasks WHERE id="${id}";`;
+        connection.query(deleteQuery, (err, result) => {
+            if (err) {
                 console.log(err);
                 throw err;
             }
@@ -77,20 +77,28 @@ const tasksDelete = (req, res) => {
 
 
 
-const putTask = (req,res) =>{
-    const {pool,params,body} = req;
-    const {id} = params;
-    const {newDescri} = body;
-    pool.getConnection( (err,connection) => {
-        if(err){
+const putTask = (req, res) => {
+    const { pool, params, body } = req;
+    const { id } = params;
+    const { newDescri, newCategory } = body;
+    if(!newDescri && !newCategory){
+        res.status(200).json({
+            msg: "No se modifico ningun campo"
+        });
+        return;
+    }
+    pool.getConnection((err, connection) => {
+        if (err) {
             console.log(err);
             throw (err);
         }
-        const updateQuery = `UPDATE tasks SET description = "${newDescri}" WHERE id = ${id}`;
-        connection.query(updateQuery, (err,result) => {
-            if(err) {
+        let updateQuery = `UPDATE tasks SET ` + ((newDescri) ? ` description = "${newDescri}" ` : "")
+            + ((newCategory) ? ` id_category = "${newCategory}"` : "") + ` WHERE id = "${id}"`;
+        console.log(updateQuery)
+        connection.query(updateQuery, (err, result) => {
+            if (err) {
                 console.log(err);
-                throw(err);
+                throw (err);
             }
             res.status(200).json({
                 msg: `La Tarea con id = ${id} fue actualizada`
@@ -99,19 +107,19 @@ const putTask = (req,res) =>{
     })
 }
 
-const putCompleteTask = (req,res) =>{
-    const {pool,params} = req;
-    const {id} = params;
-    pool.getConnection( (err,connection) => {
-        if(err){
+const putCompleteTask = (req, res) => {
+    const { pool, params } = req;
+    const { id } = params;
+    pool.getConnection((err, connection) => {
+        if (err) {
             console.log(err);
             throw (err);
         }
         const completeQuery = `update tasks set status = not status  where id=${id};`;
-        connection.query(completeQuery, (err,result) => {
-            if(err) {
+        connection.query(completeQuery, (err, result) => {
+            if (err) {
                 console.log(err);
-                throw(err);
+                throw (err);
             }
             res.status(200).json({
                 msg: `La Tarea con id = ${id} fue actualizada`,

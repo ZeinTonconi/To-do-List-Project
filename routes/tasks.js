@@ -9,25 +9,30 @@ const { validateCamp } = require('../middlewares/validateCamps');
 
 
 const router = Router();
-  
+
 
 router.get('/', [
     checkJWT
-],tasksGet);
+], tasksGet);
 
 router.post('/', [
     checkJWT,
-    check('descr','La Tarea necesita una descripcion').notEmpty(),
+    check('descr', 'La Tarea necesita una descripcion').notEmpty(),
     check('id_category', 'La Tarea necesita una categoria').notEmpty(),
     validateCamp,
     isCategoryInDB
-], tasksPost )
+], tasksPost)
 
 router.put('/:id', [
     checkJWT,
-    check('id',"El id esta vacio").notEmpty(),
+    check('id', "El id esta vacio").notEmpty(),
     validateCamp,
-    isTaskInDB
+    isTaskInDB,
+    (req,res,next) => {
+        if(req.body.id_category)
+            isCategoryInDB
+        next();
+    }
 ], putTask)
 
 router.put('/:id/complete', [
@@ -37,12 +42,12 @@ router.put('/:id/complete', [
     isTaskInDB
 ], putCompleteTask)
 
-router.delete('/:id',[
+router.delete('/:id', [
     checkJWT,
-    check('id',"El id esta vacio").notEmpty(),
+    check('id', "El id esta vacio").notEmpty(),
     validateCamp,
     isTaskInDB
-],tasksDelete)
+], tasksDelete)
 
 
 module.exports = router
