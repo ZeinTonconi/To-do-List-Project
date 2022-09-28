@@ -9,8 +9,8 @@ const isTaskInDB = (req, res, next) => {
             throw err;
         }
         let queryExist=`
-        SELECT id_task FROM tasks WHERE id_task=${id};
-      `;
+        SELECT id FROM tasks WHERE id="${id}";
+        `;
         connection.query(queryExist, (err, result) => {
             
             if (result.length===0) {
@@ -44,6 +44,8 @@ const isUserInDB =  (req,res,next) => {
 
         })
 }
+
+
 
 module.exports ={
     isTaskInDB,

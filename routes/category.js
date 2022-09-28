@@ -24,4 +24,5 @@ router.put('/:id',[
     validateCamp
 ],categoryPut)
 
+
 module.exports = router;

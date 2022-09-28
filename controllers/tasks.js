@@ -1,3 +1,4 @@
+const { ulid } = require("ulid");
 
 
 const tasksGet = (req, res) => {
@@ -23,15 +24,20 @@ const tasksGet = (req, res) => {
     })
 }
 
+
+
+
 const tasksPost = (req,res) => {
-    const {pool} = req;
+    const {pool, id_category} = req;
     const {descr, category} = req.body;
     pool.getConnection((err,connection) => {
         if(err){
             console.log(err);
             throw err;
         }
-        const insertQuery=`INSERT INTO tasks (description, id_category, status) VALUES ("${descr}","${category}",false)`;
+        console.log(id_category);
+        const id_task=ulid();
+        const insertQuery=`INSERT INTO tasks (id,description, id_category, status) VALUES ("${id_task}","${descr}","${id_category}",false)`;
         connection.query(insertQuery, (err,result) => {
             if(err){
                 console.log(err);
@@ -57,7 +63,7 @@ const tasksDelete = (req, res) => {
             console.log(err);
             throw(err);
         }
-        const deleteQuery=`DELETE FROM tasks WHERE id_task=${id}`;
+        const deleteQuery=`DELETE FROM tasks WHERE id="${id}";`;
         connection.query(deleteQuery,(err,result)=> {
             if(err){
                 console.log(err);
@@ -81,14 +87,14 @@ const putTask = (req,res) =>{
             console.log(err);
             throw (err);
         }
-        const updateQuery = `UPDATE tasks SET description = "${newDescri}" WHERE id_task = ${id}`;
+        const updateQuery = `UPDATE tasks SET description = "${newDescri}" WHERE id = ${id}`;
         connection.query(updateQuery, (err,result) => {
             if(err) {
                 console.log(err);
                 throw(err);
             }
             res.status(200).json({
-                msg: `La Tarea con id_tasks = ${id} fue actualizada`
+                msg: `La Tarea con id = ${id} fue actualizada`
             })
         })
     })
@@ -102,14 +108,14 @@ const putCompleteTask = (req,res) =>{
             console.log(err);
             throw (err);
         }
-        const completeQuery = `update tasks set status = not status  where id_task=${id};`;
+        const completeQuery = `update tasks set status = not status  where id=${id};`;
         connection.query(completeQuery, (err,result) => {
             if(err) {
                 console.log(err);
                 throw(err);
             }
             res.status(200).json({
-                msg: `La Tarea con id_tasks = ${id} fue actualizada`,
+                msg: `La Tarea con id = ${id} fue actualizada`,
             })
         })
     })

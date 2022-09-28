@@ -3,7 +3,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 const { tasksGet, tasksPost, tasksDelete, putTask, putCompleteTask } = require('../controllers/tasks');
 const { checkJWT } = require('../helpers/check-jwt');
-const { isTaskInDB } = require('../helpers/dbValidator');
+const { isTaskInDB, isCategoryInDB } = require('../helpers/dbValidator');
 const { validateCamp } = require('../middlewares/validateCamps');
 
 
@@ -18,27 +18,27 @@ router.get('/', [
 router.post('/', [
     checkJWT,
     check('descr','La Tarea necesita una descripcion').notEmpty(),
-    check('category', 'La Tarea necesita una categoria').notEmpty(),
+    check('id_category', 'La Tarea necesita una categoria').notEmpty(),
     validateCamp
 ], tasksPost )
 
 router.put('/:id', [
     checkJWT,
-    check('id',"El id no es valido").isNumeric(),
+    check('id',"El id esta vacio").isEmpty(),
     validateCamp,
     isTaskInDB
 ], putTask)
 
 router.put('/:id/complete', [
     checkJWT,
-    check('id', 'El id no es valido').isNumeric(),
+    check('id', 'El id esta vacio').isEmpty(),
     validateCamp,
     isTaskInDB
 ], putCompleteTask)
 
 router.delete('/:id',[
     checkJWT,
-    check('id').isNumeric(),
+    check('id',"El id esta vacio").isEmpty(),
     validateCamp,
     isTaskInDB
 ],tasksDelete)
