@@ -37,7 +37,6 @@ const tasksPost = (req,res) => {
             console.log(err);
             throw err;
         }
-        console.log(id_category);
         const id_task=ulid();
         const insertQuery=`INSERT INTO tasks (id,description, id_category, status) VALUES ("${id_task}","${descr}","${id_category}",false)`;
         connection.query(insertQuery, (err,result) => {

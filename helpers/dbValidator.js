@@ -45,9 +45,31 @@ const isUserInDB =  (req,res,next) => {
         })
 }
 
-
+const isCategoryInDB = (req,res,next) => {
+    const {pool} =req;
+    const {id_category} = req.body;
+    pool.getConnection((err,connection) => {
+        if(err){
+            console.log(err);
+            throw err;
+        }
+        connection.query(`select * from categories where id = "${id_category}";`, (err,result) => {
+            if(err){
+                console.log(err);
+                throw err;
+            }
+            if((result.length === 0)){
+                return res.status(404).json({
+                    msg: `La categoria no existe en la DB`
+                })
+            }
+            next();
+        })
+    })
+}
 
 module.exports ={
     isTaskInDB,
-    isUserInDB
+    isUserInDB,
+    isCategoryInDB
 }

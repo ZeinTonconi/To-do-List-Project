@@ -19,7 +19,8 @@ router.post('/', [
     checkJWT,
     check('descr','La Tarea necesita una descripcion').notEmpty(),
     check('id_category', 'La Tarea necesita una categoria').notEmpty(),
-    validateCamp
+    validateCamp,
+    isCategoryInDB
 ], tasksPost )
 
 router.put('/:id', [
