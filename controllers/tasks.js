@@ -28,8 +28,8 @@ const tasksGet = (req, res) => {
 
 
 const tasksPost = (req,res) => {
-    const {pool, id_category} = req;
-    const {descr, category} = req.body;
+    const {pool} = req;
+    const {descr, id_category} = req.body;
     pool.getConnection((err,connection) => {
         if(err){
             console.log(err);
@@ -43,12 +43,10 @@ const tasksPost = (req,res) => {
                 console.log(err);
                 throw err;
             }
-            const {insertId}=result;
             res.status(201).json({
-                msg: `Tarea creada con el task_id ${insertId}`,
-                task_id: insertId,
+                msg: `Tarea creada con el id ${id_task}`,
+                id: id_task,
                 descr,
-                category,
                 status: false
             })
         })
