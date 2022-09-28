@@ -9,7 +9,9 @@ const tasksGet = (req, res) => {
             console.log(err);
             throw err;
         }
-        connection.query(`select * from tasks`, (err, result) => {
+        connection.query(`select 
+                        tasks.id id_task, categories.id id_category, description, status, categories.category
+                        from tasks right join categories on tasks.id_category = categories.id`, (err, result) => {
             if(err){
                 console.log(err);
                 throw err;

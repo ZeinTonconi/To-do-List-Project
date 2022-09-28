@@ -24,21 +24,21 @@ router.post('/', [
 
 router.put('/:id', [
     checkJWT,
-    check('id',"El id esta vacio").isEmpty(),
+    check('id',"El id esta vacio").notEmpty(),
     validateCamp,
     isTaskInDB
 ], putTask)
 
 router.put('/:id/complete', [
     checkJWT,
-    check('id', 'El id esta vacio').isEmpty(),
+    check('id', 'El id esta vacio').notEmpty(),
     validateCamp,
     isTaskInDB
 ], putCompleteTask)
 
 router.delete('/:id',[
     checkJWT,
-    check('id',"El id esta vacio").isEmpty(),
+    check('id',"El id esta vacio").notEmpty(),
     validateCamp,
     isTaskInDB
 ],tasksDelete)

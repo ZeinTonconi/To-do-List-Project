@@ -12,7 +12,7 @@ const isTaskInDB = (req, res, next) => {
         SELECT id FROM tasks WHERE id="${id}";
         `;
         connection.query(queryExist, (err, result) => {
-            
+            console.log(queryExist,id);
             if (result.length===0) {
                 return res.status(404).json({
                     msg: `La tarea con id ${id} no existe en la DB`
