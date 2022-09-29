@@ -11,9 +11,12 @@ class Server {
     constructor() {
         this.port = process.env.APP_PORT;
         this.app = express();
+        
         this.taskPath = '/api/tasks';
         this.authPath = '/api/auth';
         this.categoryPath = '/api/category';
+        this.tagPath = '/api/tag';
+
         this.init();
     }
 
@@ -45,6 +48,7 @@ class Server {
         this.app.use(this.taskPath, [
             this.getPool
         ], require('./routes/tasks.js'));
+
         this.app.use(this.authPath, [
             this.getPool
         ], require('./routes/auth.js'));
@@ -52,6 +56,10 @@ class Server {
         this.app.use(this.categoryPath, [
             this.getPool
         ], require('./routes/category'));
+        
+        this.app.use(this.tagPath, [
+            this.getPool
+        ], require('./routes/tags.js'))
     }
 
     start() {
