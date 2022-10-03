@@ -44,8 +44,8 @@ const isUserInDB = async (req, res, next) => {
 const isCategoryInDB = async (req, res, next) => {
     try {
         const { connection } = req;
-        const { id_category } = req.body;
-        const query = `select * from categories where id = "${id_category}";`;
+        const { id } = req.params;
+        const query = `select * from categories where id = "${id}";`;
         const [rows] = await connection.execute(query);
         if ((rows.length === 0)) {
             return res.status(404).json({

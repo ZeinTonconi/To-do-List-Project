@@ -1,94 +1,72 @@
 const { ulid } = require("ulid");
 
 
-const categoryGet = (req, res) => {
-    const { pool } = req;
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.log(err);
-            throw err;
-        }
-        connection.query(`select * from categories`, (err, result) => {
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-            res.status(200).json({
-                ...result
-
-            });
-            connection.release();
-        });
-
-    })
+const categoryGet = async (req, res) => {
+    const { connection } = req;
+    try {
+        const query = `select * from categories`;
+        const [categories] = await connection.execute(query);
+        res.status(200).json({
+            categories
+        })
+    } catch (error) {
+        res.status(500).json({
+            msg: "Error al buscar en la DB"
+        })
+    }
 }
 
-const categoryPost = (req, res) => {
-    const { pool } = req;
+const categoryPost = async (req, res) => {
+    const { connection } = req;
     const { category } = req.body;
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.log(err);
-            throw err;
-        }
-        const id_category = ulid();
-        const insertQuery = `INSERT INTO categories (id, category) values ("${id_category}","${category}")`;
-        connection.query(insertQuery, (err, result) => {
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-            res.status(200).json({
-                msg: 'Se creo la categoria exitosamente',
-                id_category
-            })
+    const id_category = ulid();
+    const query = `INSERT INTO categories (id, category) values ("${id_category}","${category}")`;
+    try {
+        await connection.execute(query);
+        res.status(200).json({
+            msg: `Se creo la categoria exitosamente con el id = ${id_category}`,
+            id_category
         })
-    })
+    } catch (error) {
+        res.status(500).json({
+            msg: "Error al crear la categoria"
+        })
+    }
 
 }
 
 
-const categoryDelete = (req, res) => {
-    const { pool } = req;
+const categoryDelete = async (req, res) => {
+    const { connection } = req;
     const { id } = req.params;
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.log(err);
-            throw err;
-        }
-        const deleteQuery = `DELETE from categories where id="${id}"`;
-        connection.query(deleteQuery, (err, result) => {
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-            res.status(200).json({
-                msg: "Se elimino exitosamente la categoria"
-            })
+    const query = `DELETE from categories where id="${id}"`;
+    try {
+        await connection.execute(query);
+        res.status(200).json({
+            msg: `Se elimino la categoria con id ${id}`
         })
-    })
+    } catch (error) {
+        res.status(500).json({
+            msg: `No se pudo eliminar la categoria`
+        })
+    }
 }
 
-const categoryPut = (req, res) => {
-    const { pool } = req;
+const categoryPut = async (req, res) => {
+    const { connection } = req;
     const { id } = req.params;
-    const { newCategory} = req.body;
-    pool.getConnection((err,connection)=> {
-        if(err){
-            console.log(err);
-            throw err;
-        }
-        const updateQuery = `UPDATE categories SET category = "${newCategory}" where id="${id}"`;
-        connection.query(updateQuery, (err,result) => {
-            if(err){
-                console.log(err);
-                throw err;
-            }
-            res.status(200).json({
-                msg: `Se actualizo la categoria con id: ${id} por ${newCategory}`
-            })
+    const { newCategory } = req.body;
+    const query = `UPDATE categories SET category = "${newCategory}" where id="${id}"`;
+    try {
+        await connection.execute(query);
+        res.status(200).json({
+            msg: `Se actualizo la categoria con id: ${id} por ${newCategory}`
         })
-    })
+    } catch (error) {
+        res.status(500).json({
+            msg: "Error al actualizar la DB"
+        })
+    }
 }
 module.exports = {
     categoryGet,
