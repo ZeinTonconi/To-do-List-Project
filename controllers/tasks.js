@@ -1,131 +1,119 @@
 const { ulid } = require("ulid");
 
 
-const tasksGet = (req, res) => {
 
-    const { pool } = req;
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.log(err);
-            throw err;
-        }
-        connection.query(`select 
-                        tasks.id id_task, categories.id id_category, description, status, categories.category
-                        from tasks right join categories on tasks.id_category = categories.id`, (err, result) => {
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-            res.status(200).json({
-                ...result
 
-            });
-            connection.release();
+const tasksGet = async (req, res) => {
+    const { connection } = req;
+        
+    try {
+        let query = `select tasks.id id_task, description, status, tasks.id_category from tasks`;
+        let [tasks] = await connection.execute(query);
+
+        let idCategories = tasks.map((task) => task.id_category);
+        idCategories = new Set(idCategories);
+        idCategories = [...idCategories];
+
+        query = `select categories.id id_category, category from categories where id in ("${idCategories.join('","')}")`;
+        const [categories] = await connection.execute(query);
+        tasks = tasks.map(task => {
+            let category = categories.find((category) => category.id_category === task.id_category);
+            task.category = category;
+            return task;
         });
-
-    })
+        res.status(200).json({
+            tasks
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(404).json({
+            msg: "Not Found"
+        })
+    }
 }
 
 
-
-
-const tasksPost = (req, res) => {
-    const { pool } = req;
+const tasksPost = async (req, res) => {
+    const { connection } = req;
     const { descr, id_category } = req.body;
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.log(err);
-            throw err;
-        }
+
+    try {
         const id_task = ulid();
-        const insertQuery = `INSERT INTO tasks (id,description, id_category, status) VALUES ("${id_task}","${descr}","${id_category}",false)`;
-        connection.query(insertQuery, (err, result) => {
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-            res.status(201).json({
-                msg: `Tarea creada con el id ${id_task}`,
-                id: id_task,
-                descr,
-                status: false
-            })
+        const query = `INSERT INTO tasks (id,description, id_category, status) VALUES ("${id_task}","${descr}","${id_category}",false)`;
+        await connection.execute(query)
+        res.status(201).json({
+            msg: `Tarea creada con el id ${id_task}`,
+            id: id_task,
+            descr,
+            status: false
         })
-    })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: "Error al crear la tarea"
+        })
+    }
 }
 
-const tasksDelete = (req, res) => {
+const tasksDelete = async (req, res) => {
     const { id } = req.params;
-    const { pool } = req;
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.log(err);
-            throw (err);
-        }
-        const deleteQuery = `DELETE FROM tasks WHERE id="${id}";`;
-        connection.query(deleteQuery, (err, result) => {
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-            res.status(200).json({
-                msg: `La tarea con id ${id} se elimino correctamente`
-            })
+    const { connection } = req;
+    const query = `DELETE FROM tasks WHERE id="${id}";`;
+    try {
+        await connection.execute(query);
+        res.status(200).json({
+            msg: `La tarea con id ${id} se elimino correctamente`
         })
-    })
+    } catch (error) {
+        res.status(404).json({
+            msg: "Not Found"
+        })
+    }
 }
 
 
 
-const putTask = (req, res) => {
-    const { pool, params, body } = req;
+const putTask = async (req, res) => {
+    const { connection, params, body } = req;
     const { id } = params;
     const { newDescri, newCategory } = body;
-    if(!newDescri && !newCategory){
+    if (!newDescri && !newCategory) {
         res.status(200).json({
             msg: "No se modifico ningun campo"
         });
         return;
     }
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.log(err);
-            throw (err);
-        }
-        let updateQuery = `UPDATE tasks SET ` + ((newDescri) ? ` description = "${newDescri}" ` : "")
-            + ((newCategory) ? ` id_category = "${newCategory}"` : "") + ` WHERE id = "${id}"`;
-        console.log(updateQuery)
-        connection.query(updateQuery, (err, result) => {
-            if (err) {
-                console.log(err);
-                throw (err);
-            }
-            res.status(200).json({
-                msg: `La Tarea con id = ${id} fue actualizada`
-            })
+    let query = `UPDATE tasks SET ` + ((newDescri) ? ` description = "${newDescri}" ` : "")
+        + ((newCategory) ? ` id_category = "${newCategory}"` : "") + ` WHERE id = "${id}"`;
+    try {
+        await connection.execute(query);
+        res.status(200).json({
+            msg: `La Tarea con id = ${id} fue actualizada`
         })
-    })
+    } catch (error) {
+        console.log(error);
+        res.status(404).json({
+            msg: 'Not Found'
+        })
+    }
 }
 
-const putCompleteTask = (req, res) => {
-    const { pool, params } = req;
+const putCompleteTask = async (req, res) => {
+    const { connection, params } = req;
     const { id } = params;
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.log(err);
-            throw (err);
-        }
-        const completeQuery = `update tasks set status = not status  where id=${id};`;
-        connection.query(completeQuery, (err, result) => {
-            if (err) {
-                console.log(err);
-                throw (err);
-            }
-            res.status(200).json({
-                msg: `La Tarea con id = ${id} fue actualizada`,
-            })
+    const query = `update tasks set status = not status  where id="${id}";`;
+    try {
+        await connection.execute(query);
+        res.status(200).json({
+            msg: `La Tarea con id = ${id} fue actualizada`
         })
-    })
+
+    } catch (error) {
+        console.log(error);
+        res.status(404).json({
+            msg: "Not found"
+        })
+    }
 }
 
 module.exports = {

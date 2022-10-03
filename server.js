@@ -1,7 +1,6 @@
 require('dotenv').config();
 
 const express = require('express');
-const mysql = require('mysql');
 const { dbConnection } = require('./database/config');
 const cors = require('cors');
 
@@ -21,11 +20,11 @@ class Server {
     }
 
     async connectDB() {
-        this.pool = await dbConnection();
+        this.connection = await dbConnection();
     }
 
     async init() {
-        this.pool = await dbConnection();
+        this.connection = await dbConnection();
         this.middlewares();
         this.routes();
     }
@@ -39,26 +38,26 @@ class Server {
         this.app.use(express.static('public'))
     }
 
-     getPool = (req, res, next) => {
-        req.pool = this.pool;
+    getConnection = (req, res, next) => {
+        req.connection = this.connection;
         next();
     }
 
     routes() {
         this.app.use(this.taskPath, [
-            this.getPool
+            this.getConnection
         ], require('./routes/tasks.js'));
 
         this.app.use(this.authPath, [
-            this.getPool
+            this.getConnection
         ], require('./routes/auth.js'));
 
         this.app.use(this.categoryPath, [
-            this.getPool
+            this.getConnection
         ], require('./routes/category'));
         
         this.app.use(this.tagPath, [
-            this.getPool
+            this.getConnection
         ], require('./routes/tags.js'))
     }
 

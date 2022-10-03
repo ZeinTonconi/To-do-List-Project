@@ -20,7 +20,10 @@ const login = async (req, res) => {
             token
         })
     } catch (error) {
-
+        console.log(error);
+        res.status(500).json({
+            msg: "Error al crear el JWT"
+        })
     }
 
 }

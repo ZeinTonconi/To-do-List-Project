@@ -1,5 +1,5 @@
 
-const mysql = require('mysql');
+const mysql = require('mysql2/promise');
 require('dotenv').config();
 
 
@@ -11,18 +11,13 @@ const configDB = {
     port: process.env.DB_PORT
 };
 
-const dbConnection = () => {
+const dbConnection = async () => {
     try {
-        const connection = mysql.createConnection(configDB);
-        connection.connect(err => {
-            if (err) throw err; 
-            console.log('Database Online');
-        })
-        return mysql.createPool(configDB);
-
-    } catch (err) {
-        console.log(`Failed to connect to DB. Error: ${err}`);
-        throw new Error(`Error al conectar a la Base de Datos`);
+        const connection = await mysql.createConnection(configDB);
+        return connection;
+    } catch (error) {
+        console.log(err);
+        throw err;
     }
 }
 
