@@ -2,10 +2,9 @@ const { ulid } = require("ulid");
 
 
 
-
 const tasksGet = async (req, res) => {
     const { connection } = req;
-        
+
     try {
         let query = `select tasks.id id_task, description, status, tasks.id_category from tasks`;
         let [tasks] = await connection.execute(query);
@@ -14,13 +13,34 @@ const tasksGet = async (req, res) => {
         idCategories = new Set(idCategories);
         idCategories = [...idCategories];
 
+        
+
         query = `select categories.id id_category, category from categories where id in ("${idCategories.join('","')}")`;
         const [categories] = await connection.execute(query);
+
+        let idTask = tasks.map((task) => task.id_task);
+        query = `select * from taskTag where id_task in ("${idTask.join(`","`)}")`;
+        const [taskTag] = await connection.execute(query);
+        let idTags = taskTag.map((relation) => relation.id_tag);
+        idTags = new Set(idTags);
+        idTags = [...idTags];
+        query = `select tags.id id_tag, tagName from tags where id in ("${idTags.join(`","`)}")`;
+        const [tags] = await connection.execute(query);
+        let mapTag = new Map();
+        tags.forEach(tag => {
+            mapTag[tag.id_tag] = tag.tagName;
+        });
+
         tasks = tasks.map(task => {
             let category = categories.find((category) => category.id_category === task.id_category);
+            let actualTags = taskTag.filter(relation => relation.id_task === task.id_task);
+            actualTags = actualTags.map((tag) => mapTag[tag.id_tag]);
+            task.tags = actualTags;
             task.category = category;
             return task;
         });
+
+
         res.status(200).json({
             tasks
         })
@@ -116,10 +136,31 @@ const putCompleteTask = async (req, res) => {
     }
 }
 
+const addTag = async (req, res) => {
+    const { connection } = req;
+    const id_task = req.params.idTask;
+    const { id_tag } = req.body;
+    const id = ulid();
+    const query = `INSERT INTO taskTag (id,id_task,id_tag) VALUES ("${id}","${id_task}","${id_tag}")`;
+    try {
+        console.log(query);
+        await connection.execute(query);
+        res.status(201).json({
+            msg: "Tag creada"
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: "Error al annadir la Tag a la tarea"
+        })
+    }
+}
+
 module.exports = {
     tasksGet,
     tasksPost,
     tasksDelete,
     putTask,
-    putCompleteTask
+    putCompleteTask,
+    addTag
 }
