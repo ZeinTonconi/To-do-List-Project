@@ -19,9 +19,6 @@ class Server {
         this.init();
     }
 
-    async connectDB() {
-        this.connection = await dbConnection();
-    }
 
     async init() {
         this.connection = await dbConnection();
@@ -39,7 +36,9 @@ class Server {
     }
 
     getConnection = (req, res, next) => {
-        req.connection = this.connection;
+        const {pool,connection} = this.connection;
+        req.pool = pool;
+        req.connection = connection;
         next();
     }
 
