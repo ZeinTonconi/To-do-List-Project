@@ -1,7 +1,27 @@
 const { ulid } = require("ulid");
-
+require('mysql2')
 
 const tasksGet = async (req, res) => {
+    try {
+
+        const { connection, pool } = req;
+        let query = `select tasks.id id_task, description, status, tasks.id_category from tasks`;
+        let [tasks] = await connection.query(query);
+        let idCategories = tasks.map((task) => task.id_category);
+        idCategories = new Set(idCategories);
+        idCategories = [...idCategories];
+        const queryCate = `select categories.id id_category, category from categories where id in ("${idCategories.join('","')}")`;
+        const [obtainCate2] = await connection.query(queryCate, []);
+        res.status(201).json({
+
+            obtainCate2: obtainCate2
+        })
+    } catch (error) {
+        res.json({error});
+    }
+}
+
+const tasksGet1 = async (req, res) => {
     console.time("categories");
     console.time('relations');
     console.time("tags")
@@ -26,16 +46,17 @@ const tasksGet = async (req, res) => {
         //     }
         // })
 
-        const obtainCate = new Promise((resolve, reject) => {
-            pool.query(queryCate, [], (err, results, fields) => {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                }
-                console.timeLog("categories");
-                resolve({ categories: results });
-            });
-        });
+        const obtainCate = await pool.query(queryCate, []);
+
+        // pool.query(queryCate, [], (err, results, fields) => {
+        //     if (err) {
+        //         console.log(err);
+        //         reject(err);
+        //     }
+        //     console.timeLog("categories");
+        //     resolve({ categories: results });
+        // });
+
 
         let idTasks = tasks.map((task) => task.id_task);
         const queryTaskTag = `select * from taskTag where id_task in ("${idTasks.join(`","`)}")`;
