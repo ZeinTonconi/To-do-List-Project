@@ -24,7 +24,6 @@ class Server {
 
 
     async init() {
-        await sequelize.sync({force: false});
         this.middlewares();
         this.routes();
     }
