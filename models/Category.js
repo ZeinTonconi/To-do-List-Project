@@ -16,12 +16,12 @@ const Category = sequelize.define('categories', {
 })
 
 Task.belongsTo(Category,{
-    foreingKey: 'id_category',
+    foreignKey: 'id_category',
     targetKey: 'id'
 });
 
 Category.hasMany(Task,{
-    foreingKey: 'id_category',
+    foreignKey: 'id_category',
     sourceKey: 'id'
 })
 
