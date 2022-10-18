@@ -1,10 +1,10 @@
 require('dotenv').config();
-
 const express = require('express');
 const cors = require('cors');
-
-//const { dbConnection } = require('./database/config');
 const sequelize = require('./database/config.js');
+
+require('./models/Category');
+require('./models/Task')
 
 
 
@@ -24,6 +24,8 @@ class Server {
 
 
     async init() {
+
+        await sequelize.sync({ force: false });
         this.middlewares();
         this.routes();
     }
