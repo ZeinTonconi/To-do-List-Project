@@ -5,7 +5,7 @@ const sequelize = require('./database/config.js');
 
 require('./models/Category');
 require('./models/Task')
-
+require('./models/Tag')
 
 
 class Server {
