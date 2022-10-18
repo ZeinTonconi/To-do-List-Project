@@ -1,7 +1,7 @@
 
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { tasksGet, tasksPost, tasksDelete, putTask, putCompleteTask, addTag } = require('../controllers/tasks');
+const { tasksGet, tasksPost, tasksDelete, putTask, putCompleteTask, addTag } = require('../controllers/tasks.controller');
 const { checkJWT } = require('../helpers/check-jwt');
 const { isTaskInDB, isCategoryInDB } = require('../helpers/dbValidator');
 const { validateCamp } = require('../middlewares/validateCamps');

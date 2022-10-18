@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
-const { tagGet, tagPost } = require("../controllers/tags");
+const { tagGet, tagPost } = require("../controllers/tags.controller");
 const { validateCamp } = require("../middlewares/validateCamps");
 const router = Router();
 

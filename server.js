@@ -1,8 +1,11 @@
 require('dotenv').config();
 
 const express = require('express');
-const { dbConnection } = require('./database/config');
 const cors = require('cors');
+
+//const { dbConnection } = require('./database/config');
+const sequelize = require('./database/config.js');
+
 
 
 class Server {
@@ -21,7 +24,7 @@ class Server {
 
 
     async init() {
-        this.connection = await dbConnection();
+        await sequelize.sync({force: false});
         this.middlewares();
         this.routes();
     }
@@ -45,19 +48,19 @@ class Server {
     routes() {
         this.app.use(this.taskPath, [
             this.getConnection
-        ], require('./routes/tasks.js'));
+        ], require('./routes/tasks.routes'));
 
         this.app.use(this.authPath, [
             this.getConnection
-        ], require('./routes/auth.js'));
+        ], require('./routes/auth.routes'));
 
         this.app.use(this.categoryPath, [
             this.getConnection
-        ], require('./routes/category'));
+        ], require('./routes/category.routes'));
         
         this.app.use(this.tagPath, [
             this.getConnection
-        ], require('./routes/tags.js'))
+        ], require('./routes/tags.routes'))
     }
 
     start() {
