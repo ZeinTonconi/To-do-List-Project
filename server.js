@@ -13,7 +13,7 @@ class Server {
     constructor() {
         this.port = process.env.APP_PORT;
         this.app = express();
-        
+
         this.taskPath = '/api/tasks';
         this.authPath = '/api/auth';
         this.categoryPath = '/api/category';
@@ -40,28 +40,20 @@ class Server {
     }
 
     getConnection = (req, res, next) => {
-        const {pool,connection} = this.connection;
+        const { pool, connection } = this.connection;
         req.pool = pool;
         req.connection = connection;
         next();
     }
 
     routes() {
-        this.app.use(this.taskPath, [
-            this.getConnection
-        ], require('./routes/tasks.routes'));
+        this.app.use(this.taskPath, require('./routes/tasks.routes'));
 
-        this.app.use(this.authPath, [
-            this.getConnection
-        ], require('./routes/auth.routes'));
+        this.app.use(this.authPath, require('./routes/auth.routes'));
 
-        this.app.use(this.categoryPath, [
-            this.getConnection
-        ], require('./routes/category.routes'));
-        
-        this.app.use(this.tagPath, [
-            this.getConnection
-        ], require('./routes/tags.routes'))
+        this.app.use(this.categoryPath, require('./routes/category.routes'));
+
+        this.app.use(this.tagPath, require('./routes/tags.routes'))
     }
 
     start() {

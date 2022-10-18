@@ -1,3 +1,19 @@
+const Category = require("../models/Category");
+
+
+const isInDB = async (dataBase, params) => {
+    try {
+        const element = await Category.findOne({
+            where: params
+        })
+        if (element!==null)
+            return true;
+        else return false;
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
 
 const isTaskInDB = async (req, res, next) => {
     try {
@@ -65,5 +81,6 @@ const isCategoryInDB = async (req, res, next) => {
 module.exports = {
     isTaskInDB,
     isUserInDB,
-    isCategoryInDB
+    isCategoryInDB,
+    isInDB
 }

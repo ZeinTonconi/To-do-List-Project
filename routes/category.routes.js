@@ -10,7 +10,7 @@ const router = Router();
 router.get('/',categoryGet);
 
 router.post('/',[
-    check('category','Se necesita la categoria').notEmpty(),
+    check('categoryName','Se necesita la categoria').notEmpty(),
     validateCamp
 ],categoryPost)
 

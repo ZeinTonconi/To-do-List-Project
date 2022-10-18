@@ -1,4 +1,5 @@
 const { ulid } = require("ulid");
+const Category = require("../models/Category");
 
 
 const categoryGet = async (req, res) => {
@@ -17,17 +18,20 @@ const categoryGet = async (req, res) => {
 }
 
 const categoryPost = async (req, res) => {
-    const { connection } = req;
-    const { category } = req.body;
+    const { categoryName } = req.body;
     const id_category = ulid();
-    const query = `INSERT INTO categories (id, category) values ("${id_category}","${category}")`;
-    try {
-        await connection.execute(query);
-        res.status(200).json({
-            msg: `Se creo la categoria exitosamente con el id = ${id_category}`,
-            id_category
+    try{
+        const category = await Category.create({
+            id: id_category,
+            categoryName
         })
-    } catch (error) {
+        res.status(201).json({
+            msg: `Se creo la categoria exitosamente con el id = ${id_category}`,
+            category
+        })
+    }
+    catch (error) {
+        console.log(error);
         res.status(500).json({
             msg: "Error al crear la categoria"
         })

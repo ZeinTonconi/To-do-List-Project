@@ -1,4 +1,5 @@
 const { ulid } = require("ulid");
+const Task = require("../models/Task");
 require('mysql2')
 
 const tasksGet = async (req, res) => {
@@ -183,18 +184,18 @@ const tasksGet1 = async (req, res) => {
 
 
 const tasksPost = async (req, res) => {
-    const { connection } = req;
     const { descr, id_category } = req.body;
-
     try {
         const id_task = ulid();
-        const query = `INSERT INTO tasks (id,description, id_category, status) VALUES ("${id_task}","${descr}","${id_category}",false)`;
-        await connection.execute(query)
+        const newTask = await Task.create({
+            id: id_task,
+            description: descr,
+            id_category
+        })
+        
         res.status(201).json({
             msg: `Tarea creada con el id ${id_task}`,
-            id: id_task,
-            descr,
-            status: false
+            newTask
         })
     } catch (error) {
         console.log(error);
