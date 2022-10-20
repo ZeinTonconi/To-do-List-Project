@@ -18,7 +18,7 @@ const categoryGet = async (req, res) => {
 const categoryPost = async (req, res) => {
     const { categoryName } = req.body;
     const id_category = ulid();
-    try{
+    try {
         const category = await Category.create({
             id: id_category,
             categoryName
@@ -41,9 +41,9 @@ const categoryPost = async (req, res) => {
 const categoryDelete = async (req, res) => {
     const { id } = req.params;
     try {
-        
+
         const category = await Category.destroy({
-            where: {id}
+            where: { id }
         })
         res.status(200).json({
             msg: `Se elimino la categoria con id ${id}`,
@@ -57,16 +57,19 @@ const categoryDelete = async (req, res) => {
 }
 
 const categoryPut = async (req, res) => {
-    const { connection } = req;
     const { id } = req.params;
     const { newCategory } = req.body;
-    const query = `UPDATE categories SET category = "${newCategory}" where id="${id}"`;
     try {
-        await connection.execute(query);
+        const category = await Category.findByPk(id);
+        category.categoryName = newCategory;
+    
+        await category.save();
         res.status(200).json({
-            msg: `Se actualizo la categoria con id: ${id} por ${newCategory}`
+            msg: "Category updated",
+            category
         })
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             msg: "Error al actualizar la DB"
         })
