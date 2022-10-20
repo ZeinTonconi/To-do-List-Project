@@ -1,14 +1,16 @@
-const Category = require("../models/Category");
+const DB = require('../models/index.models');
 
 
 const isInDB = async (dataBase, params) => {
     try {
-        const element = await Category.findOne({
+        const model = DB[dataBase];
+        if(!model){
+            return new Error(`Model isn't in the DB`);
+        }
+        const element = await model.findOne({
             where: params
         })
-        if (element!==null)
-            return true;
-        else return false;
+        return (element!==null);
     } catch (error) {
         console.log(error);
         return false;
