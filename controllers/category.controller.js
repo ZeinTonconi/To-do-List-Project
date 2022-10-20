@@ -39,13 +39,15 @@ const categoryPost = async (req, res) => {
 
 
 const categoryDelete = async (req, res) => {
-    const { connection } = req;
     const { id } = req.params;
-    const query = `DELETE from categories where id="${id}"`;
     try {
-        await connection.execute(query);
+        
+        const category = await Category.destroy({
+            where: {id}
+        })
         res.status(200).json({
-            msg: `Se elimino la categoria con id ${id}`
+            msg: `Se elimino la categoria con id ${id}`,
+            category
         })
     } catch (error) {
         res.status(500).json({
