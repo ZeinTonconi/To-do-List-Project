@@ -1,42 +1,42 @@
 const { ulid } = require("ulid");
+const Tag = require('../models/Tag')
 
-const tagPost = async (req,res) =>{
-    const {connection} = req;
-    const {tagName} = req.body;
+const postTag = async (req, res) => {
+    const { tagName } = req.body;
     try {
         const id_tag = ulid();
-        const query =`INSERT INTO tags (id,tagName) VALUES ("${id_tag}", "${tagName}")`;
-        await connection.execute(query);
-        res.status(201).json({
-            msg: `Tag creado con el id ${id_tag}`,
+        const tag = await Tag.create({
             id: id_tag,
-            tagName
+            tagName: tagName
+        })
+        console.log(tag.tagName, tagName);
+        res.status(201).json({
+            msg: `Tag has been created`,
+            tag
         })
     } catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: `Error al crear tag`
+            msg: `Error trying to create a tag`
         })
     }
 }
 
-const tagGet = async (req,res) => {
-    const {connection} = req;
+const getTags = async (req, res) => {
     try {
-        const query = `SELECT * FROM tags`;
-        const [tags]=await connection.execute(query);
+        const tags = await Tag.findAll();
         res.status(200).json({
             tags
         })
     } catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: `Error al consultar a la DB`
+            msg: `DB Error`
         })
     }
 }
 
 module.exports = {
-    tagPost,
-    tagGet
+    postTag,
+    getTags
 }

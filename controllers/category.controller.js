@@ -71,7 +71,7 @@ const categoryPut = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: "Error al actualizar la DB"
+            msg: "Error trying to update the category"
         })
     }
 }
