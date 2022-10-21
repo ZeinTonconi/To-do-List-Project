@@ -13,7 +13,7 @@ const configDB = {
 
 
 /*
- * Function to retorn the sequelize connection 
+ * Function to retorn the sequelize connection nuevo comentario 1
  */
 const dbConnection = () => {
 
