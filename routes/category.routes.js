@@ -17,9 +17,9 @@ router.post('/', [
 router.delete('/:id', [
     check('id', 'Se necesita el id de la categoria').notEmpty(),
     validateCamp,
-    (req, res, next) => {
+    async (req, res, next) => {
         const { id } = req.params;
-        if (isInDB('category', { id }))
+        if (await isInDB('category', { id }))
             next();
         else return res.status(404);
     }

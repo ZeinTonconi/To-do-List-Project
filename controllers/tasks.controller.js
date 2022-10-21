@@ -1,4 +1,5 @@
 const { ulid } = require("ulid");
+const Tag = require("../models/Tag");
 const Task = require("../models/Task");
 require('mysql2')
 
@@ -18,7 +19,7 @@ const tasksGet = async (req, res) => {
             obtainCate2: obtainCate2
         })
     } catch (error) {
-        res.json({error});
+        res.json({ error });
     }
 }
 
@@ -192,7 +193,7 @@ const tasksPost = async (req, res) => {
             description: descr,
             id_category
         })
-        
+
         res.status(201).json({
             msg: `Tarea creada con el id ${id_task}`,
             newTask
@@ -207,16 +208,17 @@ const tasksPost = async (req, res) => {
 
 const tasksDelete = async (req, res) => {
     const { id } = req.params;
-    const { connection } = req;
-    const query = `DELETE FROM tasks WHERE id="${id}";`;
     try {
-        await connection.execute(query);
-        res.status(200).json({
-            msg: `La tarea con id ${id} se elimino correctamente`
+        await Task.destroy({
+            where: { id }
+        })
+        res.status(201).json({
+            msg: `The task has been eliminated`
         })
     } catch (error) {
-        res.status(404).json({
-            msg: "Not Found"
+        console.log(error);
+        res.status(500).json({
+            msg: `Error trying to delete the task`
         })
     }
 }
@@ -224,64 +226,69 @@ const tasksDelete = async (req, res) => {
 
 
 const putTask = async (req, res) => {
-    const { connection, params, body } = req;
-    const { id } = params;
-    const { newDescri, newCategory } = body;
+    const { id } = req.params;
+    const { newDescri, newCategory } = req.body;
     if (!newDescri && !newCategory) {
         res.status(200).json({
-            msg: "No se modifico ningun campo"
+            msg: "No element has been updated"
         });
         return;
     }
-    let query = `UPDATE tasks SET ` + ((newDescri) ? ` description = "${newDescri}" ` : "")
-        + ((newCategory) ? ` id_category = "${newCategory}"` : "") + ` WHERE id = "${id}"`;
     try {
-        await connection.execute(query);
+        let task = await Task.findByPk(id);
+        if (newDescri)
+            task.description = newDescri;
+        if (newCategory)
+            task.id_category = newCategory;
+        await task.save();
         res.status(200).json({
-            msg: `La Tarea con id = ${id} fue actualizada`
+            msg: `Task updated`,
+            task
         })
     } catch (error) {
         console.log(error);
-        res.status(404).json({
-            msg: 'Not Found'
+        res.status(500).json({
+            msg: 'DB Error'
         })
     }
 }
 
 const putCompleteTask = async (req, res) => {
-    const { connection, params } = req;
-    const { id } = params;
+    const { id } = req.params;
     const query = `update tasks set status = not status  where id="${id}";`;
     try {
-        await connection.execute(query);
+        const task = await Task.findByPk(id);
+        task.status = !task.status;
+        await task.save();
         res.status(200).json({
-            msg: `La Tarea con id = ${id} fue actualizada`
+            msg: `Task updated`,
+            task
         })
 
     } catch (error) {
         console.log(error);
-        res.status(404).json({
-            msg: "Not found"
+        res.status(500).json({
+            msg: "DB Error"
         })
     }
 }
 
 const addTag = async (req, res) => {
-    const { connection } = req;
     const id_task = req.params.idTask;
     const { id_tag } = req.body;
     const id = ulid();
-    const query = `INSERT INTO taskTag (id,id_task,id_tag) VALUES ("${id}","${id_task}","${id_tag}")`;
     try {
-        console.log(query);
-        await connection.execute(query);
+        const task = await Task.findByPk(id_task);
+        const tag = await Tag.findByPk(id_tag);
+        await task.addTag(tag);
         res.status(201).json({
-            msg: "Tag creada"
+            msg: "Tag added",
+            task
         })
     } catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: "Error al annadir la Tag a la tarea"
+            msg: "DB Error"
         })
     }
 }

@@ -3,7 +3,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 const { tasksGet, tasksPost, tasksDelete, putTask, putCompleteTask, addTag } = require('../controllers/tasks.controller');
 const { checkJWT } = require('../helpers/check-jwt');
-const { isTaskInDB, isCategoryInDB, isInDB } = require('../helpers/dbValidator');
+const { isInDB } = require('../helpers/dbValidator');
 const { validateCamp } = require('../middlewares/validateCamps');
 const Category = require('../models/Category');
 
@@ -23,7 +23,7 @@ router.post('/', [
     validateCamp,
     async (req, res, next) => {
         try {
-            if (await isInDB(Category, {
+            if (await isInDB('category', {
                 id: req.body.id_category
             })) next();
             else return res.status(404).json({
@@ -48,26 +48,63 @@ router.put('/:id', [
     check('id', "El id esta vacio").notEmpty(),
     validateCamp,
 
-    isTaskInDB,
-    (req, res, next) => {
-        if (req.body.id_category)
-            isCategoryInDB
-        next();
+    async (req, res, next) => {
+        const { id } = req.params;
+        try {
+            if (await isInDB('task', { id }))
+                next();
+            else
+                return res.status(404);
+        } catch (error) {
+            console.log(error);
+            return res.status(500);
+        }
+    },
+    async (req, res, next) => {
+        const { id_category } = req.body; 
+        try {
+            if (!id_category || await isInDB('category', { id_category }))
+                next();
+            else
+                return res.status(404);
+        } catch (error) {
+            console.log(error);
+            return res.status(500);
+        }
     }
 ], putTask)
+
 
 router.put('/:id/complete', [
     //checkJWT,
     check('id', 'El id esta vacio').notEmpty(),
     validateCamp,
-    isTaskInDB
+    async(req,res,next) => {
+        const {id}=req.params.id;
+        try {
+            if(await isInDB('task', {id})) next();
+            else res.status(404);
+        } catch (error) {
+            console.log(error);
+            return res.status(500);
+        }
+    }
 ], putCompleteTask)
 
 router.delete('/:id', [
     //checkJWT,
     check('id', "El id esta vacio").notEmpty(),
     validateCamp,
-    isTaskInDB
+    async(req,res,next) => {
+        const {id}=req.params.id;
+        try {
+            if(await isInDB('task', {id})) next();
+            else res.status(404);
+        } catch (error) {
+            console.log(error);
+            return res.status(500);
+        }
+    }
 ], tasksDelete)
 
 
