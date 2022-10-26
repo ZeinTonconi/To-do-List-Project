@@ -37,13 +37,13 @@ const tasksPost = async (req, res) => {
         })
 
         res.status(201).json({
-            msg: `Tarea creada con el id ${id_task}`,
+            msg: `Task created`,
             newTask
         })
     } catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: "Error al crear la tarea"
+            msg: "Error trying to create a task"
         })
     }
 }
@@ -97,7 +97,6 @@ const putTask = async (req, res) => {
 
 const putCompleteTask = async (req, res) => {
     const { id } = req.params;
-    const query = `update tasks set status = not status  where id="${id}";`;
     try {
         const task = await Task.findByPk(id);
         task.status = !task.status;
@@ -118,7 +117,6 @@ const putCompleteTask = async (req, res) => {
 const addTag = async (req, res) => {
     const id_task = req.params.idTask;
     const { id_tag } = req.body;
-    const id = ulid();
     try {
         const task = await Task.findByPk(id_task);
         const tag = await Tag.findByPk(id_tag);
@@ -130,7 +128,7 @@ const addTag = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: "DB Error"
+            msg: "Error trying to add a tag to a task"
         })
     }
 }
