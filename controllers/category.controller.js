@@ -24,14 +24,14 @@ const categoryPost = async (req, res) => {
             categoryName
         })
         res.status(201).json({
-            msg: `Se creo la categoria exitosamente con el id = ${id_category}`,
+            msg: `The new Category has been created`,
             category
         })
     }
     catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: "Error al crear la categoria"
+            msg: "Error trying to create a category"
         })
     }
 
@@ -46,12 +46,12 @@ const categoryDelete = async (req, res) => {
             where: { id }
         })
         res.status(200).json({
-            msg: `Se elimino la categoria con id ${id}`,
+            msg: `The Category has been deleted`,
             category
         })
     } catch (error) {
         res.status(500).json({
-            msg: `No se pudo eliminar la categoria`
+            msg: `Error trying to delete a category`
         })
     }
 }

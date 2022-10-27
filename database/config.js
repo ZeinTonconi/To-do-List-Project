@@ -1,20 +1,6 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
-
-
-const configDB = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT
-};
-
-
-/*
- * Function to retorn the sequelize connection 
- */
 const dbConnection = () => {
 
     const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {

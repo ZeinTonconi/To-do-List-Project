@@ -2,7 +2,7 @@ const { Router } = require("express");
 const { categoryGet, categoryPost, categoryDelete, categoryPut } = require("../controllers/category.controller");
 const { check } = require('express-validator');
 const { validateCamp } = require("../middlewares/validateCamps");
-const { isCategoryInDB, isInDB } = require("../helpers/dbValidator");
+const { isInDB } = require("../helpers/dbValidator");
 
 
 const router = Router();
