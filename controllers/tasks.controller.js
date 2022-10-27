@@ -1,16 +1,21 @@
 const { ulid } = require("ulid");
 const Tag = require("../models/Tag");
 const Task = require("../models/Task");
+const Category = require('../models/Category')
 
 const tasksGet = async (req, res) => {
     try {
         const tasks = await Task.findAll({
-            include: {
+            include: [{
                 model: Tag,
                 through: {
                     attributes: []
-                }
+                },
+            },
+            {
+                model: Category
             }
+        ],
             
         });
         res.status(200).json({
