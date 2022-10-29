@@ -5,19 +5,17 @@ const { tasksGet, tasksPost, tasksDelete, putTask, putCompleteTask, addTag } = r
 const { checkJWT } = require('../helpers/check-jwt');
 const { isInDB } = require('../helpers/dbValidator');
 const { validateCamp } = require('../middlewares/validateCamps');
-const Category = require('../models/Category');
-
 
 
 const router = Router();
 
 
 router.get('/', [
-    //checkJWT
+    checkJWT
 ], tasksGet);
 
 router.post('/', [
-    //checkJWT,
+    checkJWT,
     check('descr', 'La Tarea necesita una descripcion').notEmpty(),
     check('id_category', 'La Tarea necesita una categoria').notEmpty(),
     validateCamp,
@@ -38,13 +36,13 @@ router.post('/', [
 ], tasksPost)
 
 router.post('/:idTask/tag', [
-    //checkJWT,
+    checkJWT,
     check('id_tag', 'Se debe incluir el id del tag').notEmpty(),
     validateCamp
 ], addTag)
 
 router.put('/:id', [
-    //checkJWT,
+    checkJWT,
     check('id', "El id esta vacio").notEmpty(),
     validateCamp,
 
@@ -76,7 +74,7 @@ router.put('/:id', [
 
 
 router.put('/:id/complete', [
-    //checkJWT,
+    checkJWT,
     check('id', 'El id esta vacio').notEmpty(),
     validateCamp,
     async(req,res,next) => {
@@ -92,7 +90,7 @@ router.put('/:id/complete', [
 ], putCompleteTask)
 
 router.delete('/:id', [
-    //checkJWT,
+    checkJWT,
     check('id', "El id esta vacio").notEmpty(),
     validateCamp,
     async(req,res,next) => {
