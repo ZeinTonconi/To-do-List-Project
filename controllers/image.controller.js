@@ -6,18 +6,15 @@ const fs = require('fs')
 
 const imagePost = async (req,res) => {
     const {imgName} = req.body;
+    const {id_task} = req.params;
     try {
         const id_img = ulid();
         const imgDBName = await uploadImg(req);
-        console.log({
-            id_img,
-            imgName,
-            imgDBName
-        })
         const img = await Image.create({
             id: id_img,
             imgName,
-            imgDBName
+            imgDBName,
+            id_task
         })
         res.status(201).json({
             msg: "Image created",

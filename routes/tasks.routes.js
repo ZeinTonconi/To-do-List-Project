@@ -1,9 +1,11 @@
 
 const { Router } = require('express');
 const { check } = require('express-validator');
+const { imagePost } = require('../controllers/image.controller');
 const { tasksGet, tasksPost, tasksDelete, putTask, putCompleteTask, addTag } = require('../controllers/tasks.controller');
 const { checkJWT } = require('../helpers/check-jwt');
 const { isInDB } = require('../helpers/dbValidator');
+const { upload } = require('../helpers/uploadImg');
 const { validateCamp } = require('../middlewares/validateCamps');
 
 
@@ -97,7 +99,7 @@ router.delete('/:id', [
         const {id}=req.params.id;
         try {
             if(await isInDB('task', {id})) next();
-            else res.status(404);
+            else return res.status(404);
         } catch (error) {
             console.log(error);
             return res.status(500);
@@ -105,5 +107,19 @@ router.delete('/:id', [
     }
 ], tasksDelete)
 
+router.post('/:id_task/addImage',[
+    checkJWT,
+    check('imgName', `Must specified the image's Name`).notEmpty(),
+    async(req,res, next) => {
+        const {id_task} = req.params;
+        try {
+            if(await isInDB('task', {id:id_task})) next();
+            else return req.status(404);
+        } catch (error) {   
+            return res.status(404);
+        }
+    },
+    upload.single('file')
+],imagePost)
 
 module.exports = router
