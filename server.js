@@ -3,10 +3,15 @@ const express = require('express');
 const cors = require('cors');
 const sequelize = require('./database/config.js');
 
-require('./models/Category');
-require('./models/Task')
-require('./models/Tag')
+require('./models/index.models');
 
+
+
+/*
+app.get('*', function(req, res){
+  res.sendfile('./views/index.html');
+});
+*/
 
 class Server {
 
@@ -18,6 +23,7 @@ class Server {
         this.authPath = '/api/auth';
         this.categoryPath = '/api/category';
         this.tagPath = '/api/tag';
+        this.imagePath = '/api/image';
 
         this.init();
     }
@@ -53,7 +59,9 @@ class Server {
 
         this.app.use(this.categoryPath, require('./routes/category.routes'));
 
-        this.app.use(this.tagPath, require('./routes/tags.routes'))
+        this.app.use(this.tagPath, require('./routes/tags.routes'));
+
+        this.app.use(this.imagePath, require('./routes/image.routes'));
     }
 
     start() {

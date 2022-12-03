@@ -9,3 +9,9 @@
 /.env
 
 /My_SQL_Queries.sql
+
+/uploads/*
+
+/optimize/*
+
+.idea

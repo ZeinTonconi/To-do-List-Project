@@ -1,7 +1,8 @@
-const DB = require('../models/index.models');
-
+const {database} = require('../models/index.models');
+const DB = database;
 
 const isInDB = async (dataBase, params) => {
+    
     try {
         const model = DB[dataBase];
         if(!model){

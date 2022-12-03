@@ -1,7 +1,5 @@
 const { ulid } = require("ulid");
-const Tag = require("../models/Tag");
-const Task = require("../models/Task");
-const Category = require('../models/Category')
+const {Task, Tag, Category, Image} = require('../models/index.models');
 
 const tasksGet = async (req, res) => {
     try {
@@ -14,6 +12,12 @@ const tasksGet = async (req, res) => {
             },
             {
                 model: Category
+            },
+            {
+                model: Image,
+                attributes: [
+                    "id", "imgName", "imgDBName"
+                ]       
             }
         ],
             
