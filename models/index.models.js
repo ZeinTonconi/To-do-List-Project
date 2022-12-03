@@ -5,11 +5,18 @@ const User = require("./User");
 const Image = require('./Image');
 
 const database = {
+    category: Category,
+    task: Task,
+    tag: Tag,
+    user: User,
+    image: Image
+}
+
+module.exports = {
     Category,
     Task,
     Tag,
     User,
-    Image
-}
-
-module.exports = database;
+    Image,
+    database
+};

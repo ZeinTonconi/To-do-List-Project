@@ -96,13 +96,17 @@ router.delete('/:id', [
     check('id', "El id esta vacio").notEmpty(),
     validateCamp,
     async(req,res,next) => {
-        const {id}=req.params.id;
+        const {id}=req.params;
         try {
             if(await isInDB('task', {id})) next();
-            else return res.status(404);
+            else return res.status(404).json({
+                msg: "Not Found"
+            });
         } catch (error) {
             console.log(error);
-            return res.status(500);
+            return res.status(500).json({
+                error
+            });
         }
     }
 ], tasksDelete)
