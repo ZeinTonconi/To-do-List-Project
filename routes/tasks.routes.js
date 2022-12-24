@@ -114,16 +114,30 @@ router.delete('/:id', [
 router.post('/:id_task/addImage',[
     checkJWT,
     check('imgName', `Must specified the image's Name`).notEmpty(),
+    check('file',"No hay imagen").notEmpty(),
+    (req,res,next) => {
+        console.log(req.body);
+        next();
+    },
     async(req,res, next) => {
         const {id_task} = req.params;
         try {
             if(await isInDB('task', {id:id_task})) next();
-            else return req.status(404);
+            else return res.status(404);
         } catch (error) {   
             return res.status(404);
         }
     },
-    upload.single('file')
+    (req,res,next) => {
+        console.log(req.body);
+        next();
+    },
+    upload,
+
+    (req,res,next) => {
+        console.log(req.body);
+        next();
+    }
 ],imagePost)
 
 module.exports = router

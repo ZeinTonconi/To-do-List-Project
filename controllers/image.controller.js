@@ -9,11 +9,11 @@ const imagePost = async (req,res) => {
     const {id_task} = req.params;
     try {
         const id_img = ulid();
-        const imgDBName = await uploadImg(req);
+        const url = req.location;
         const img = await Image.create({
             id: id_img,
             imgName,
-            imgDBName,
+            url,
             id_task
         })
         res.status(201).json({

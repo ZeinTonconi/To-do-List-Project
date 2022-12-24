@@ -16,7 +16,7 @@ const tasksGet = async (req, res) => {
             {
                 model: Image,
                 attributes: [
-                    "id", "imgName", "imgDBName"
+                    "id", "imgName", "url"
                 ]       
             }
         ],

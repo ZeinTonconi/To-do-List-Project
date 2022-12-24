@@ -8,11 +8,11 @@ const { validateCamp } = require('../middlewares/validateCamps');
 
 const router = Router();
 
-router.post('/',[
-    checkJWT,
-    check('imgName', `Must specified the image's Name`).notEmpty(),
-    upload.single('file')
-], imagePost);
+// router.post('/',[
+//     checkJWT,
+//     check('imgName', `Must specified the image's Name`).notEmpty(),
+//     upload
+// ], imagePost);
 
 router.delete('/:imgId',[
     checkJWT,

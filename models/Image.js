@@ -11,7 +11,7 @@ const Image = sequelize.define('images', {
         type: DataTypes.STRING(32),
         allowNull: false
     },
-    imgDBName: {
+    url: {
         type: DataTypes.STRING(32),
         allowNull: false
     }
