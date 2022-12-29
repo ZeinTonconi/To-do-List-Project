@@ -1,17 +1,10 @@
 const { ulid } = require("ulid");
 const Category = require("../models/Category");
-const jwt = require('jsonwebtoken')
 
 
 const categoryGet = async (req, res) => {
-
-    let {id_user} =  jwt.verify(req.header('keyToken'),process.env.SECRET_OR_PRIVATEKEY);
     try {
-        const categories = await Category.findAll({
-            where: {
-                id_user
-            }
-        });
+        const categories = await Category.findAll();
         res.status(200).json({
             categories
         })
@@ -24,19 +17,15 @@ const categoryGet = async (req, res) => {
 
 const categoryPost = async (req, res) => {
     const { categoryName } = req.body;
-    let {id_user} =  jwt.verify(req.header('keyToken'),process.env.SECRET_OR_PRIVATEKEY);
-
     const id_category = ulid();
     try {
         const category = await Category.create({
             id: id_category,
-            categoryName,
-            id_user
-        });
-        const {id_user:a, ...returnCate} = category.dataValues;
+            categoryName
+        })
         res.status(201).json({
             msg: `The new Category has been created`,
-            returnCate
+            category
         })
     }
     catch (error) {

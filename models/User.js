@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/config');
-const Task = require('./Task');
 
 const User = sequelize.define('users', {
     id: {
@@ -17,16 +16,6 @@ const User = sequelize.define('users', {
     }
 }, {
     timestamps: false
-})
-
-Task.belongsTo(User,{
-    foreignKey: "id_user",
-    targetKey: "id"
-});
-
-User.hasMany(Task,{
-    foreignKey: "id_user",
-    sourceKey: "id"
 })
 
 
