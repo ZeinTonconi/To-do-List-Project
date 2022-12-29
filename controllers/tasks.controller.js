@@ -1,9 +1,17 @@
 const { ulid } = require("ulid");
 const {Task, Tag, Category, Image} = require('../models/index.models');
+const jwt = require('jsonwebtoken');
 
 const tasksGet = async (req, res) => {
+    let {id_user} =  jwt.verify(req.header('keyToken'),process.env.SECRET_OR_PRIVATEKEY);
     try {
         const tasks = await Task.findAll({
+            where:{
+                id_user
+            },
+            attributes: {
+                exclude: ["id_user"]
+            },
             include: [{
                 model: Tag,
                 through: {
@@ -11,7 +19,10 @@ const tasksGet = async (req, res) => {
                 },
             },
             {
-                model: Category
+                model: Category,
+                attributes:{
+                    exclude: ["id_user"]
+                }
             },
             {
                 model: Image,
@@ -36,13 +47,15 @@ const tasksGet = async (req, res) => {
 
 
 const tasksPost = async (req, res) => {
+    let {id_user} =  jwt.verify(req.header('keyToken'),process.env.SECRET_OR_PRIVATEKEY);
     const { descr, id_category } = req.body;
     try {
         const id_task = ulid();
         const newTask = await Task.create({
             id: id_task,
             description: descr,
-            id_category
+            id_category,
+            id_user
         })
 
         res.status(201).json({
@@ -61,7 +74,9 @@ const tasksDelete = async (req, res) => {
     const { id } = req.params;
     try {
         await Task.destroy({
-            where: { id }
+            where: { 
+                id
+            }
         })
         res.status(201).json({
             msg: `The task has been eliminated`

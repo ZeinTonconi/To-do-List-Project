@@ -1,10 +1,13 @@
 const { generateJWT } = require("../helpers/generateJWT");
 const User = require("../models/User");
-
+const {ulid} = require('ulid')
+const jwt = require('jsonwebtoken')
 
 const login = async (req, res) => {
     const { email, password } = req.body;
     try {
+
+        console.log("user login")
         const user = await User.findOne({
             where:{
                     email,
@@ -28,6 +31,27 @@ const login = async (req, res) => {
 }
 
 
+const postUser = async (req,res) => {
+    const {email,password} = req.body;
+    const id_user = ulid();
+    try {
+        await User.create({
+            id: id_user,
+            email,
+            password
+        });
+        res.status(201).json({
+            msg: "User Created"
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: "DB Error"
+        })
+    }
+}
+
 module.exports = {
-    login
+    login,
+    postUser
 }
