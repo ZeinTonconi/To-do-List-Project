@@ -3,7 +3,7 @@ const {Task, Tag, Category, Image} = require('../models/index.models');
 const jwt = require('jsonwebtoken');
 
 const tasksGet = async (req, res) => {
-    let {id_user} =  jwt.verify(req.header('keyToken'),process.env.SECRET_OR_PRIVATEKEY);
+    const {id_user} = req;
     try {
         const tasks = await Task.findAll({
             where:{
@@ -47,7 +47,7 @@ const tasksGet = async (req, res) => {
 
 
 const tasksPost = async (req, res) => {
-    let {id_user} =  jwt.verify(req.header('keyToken'),process.env.SECRET_OR_PRIVATEKEY);
+    const {id_user} = req;
     const { descr, id_category } = req.body;
     try {
         const id_task = ulid();
@@ -165,3 +165,6 @@ module.exports = {
     putCompleteTask,
     addTag
 }
+
+// Terminar Usuarios
+// Subir Imagenes Localmente (funcion Upload imgane local y bucket)

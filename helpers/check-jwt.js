@@ -9,7 +9,8 @@ const checkJWT =  (req, res, next) => {
     }
 
     try{
-        jwt.verify(token,process.env.SECRET_OR_PRIVATEKEY);
+        const {id_user}=jwt.verify(token,process.env.SECRET_OR_PRIVATEKEY);
+        req.id_user=id_user;
         next();
     }
     catch(err) {

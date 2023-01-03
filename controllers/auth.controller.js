@@ -1,13 +1,11 @@
 const { generateJWT } = require("../helpers/generateJWT");
 const User = require("../models/User");
 const {ulid} = require('ulid')
-const jwt = require('jsonwebtoken')
 
 const login = async (req, res) => {
     const { email, password } = req.body;
     try {
 
-        console.log("user login")
         const user = await User.findOne({
             where:{
                     email,

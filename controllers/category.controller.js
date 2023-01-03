@@ -4,8 +4,7 @@ const jwt = require('jsonwebtoken')
 
 
 const categoryGet = async (req, res) => {
-
-    let {id_user} =  jwt.verify(req.header('keyToken'),process.env.SECRET_OR_PRIVATEKEY);
+    const {id_user}=req;
     try {
         const categories = await Category.findAll({
             where: {
@@ -24,8 +23,7 @@ const categoryGet = async (req, res) => {
 
 const categoryPost = async (req, res) => {
     const { categoryName } = req.body;
-    let {id_user} =  jwt.verify(req.header('keyToken'),process.env.SECRET_OR_PRIVATEKEY);
-
+    const {id_user} = req;
     const id_category = ulid();
     try {
         const category = await Category.create({
@@ -52,7 +50,6 @@ const categoryPost = async (req, res) => {
 const categoryDelete = async (req, res) => {
     const { id } = req.params;
     try {
-
         const category = await Category.destroy({
             where: { id }
         })

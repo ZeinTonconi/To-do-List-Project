@@ -3,8 +3,7 @@ const Tag = require('../models/Tag')
 const jwt = require('jsonwebtoken');
 
 const postTag = async (req, res) => {
-
-    const {id_user} =  jwt.verify(req.header('keyToken'),process.env.SECRET_OR_PRIVATEKEY);
+    const {id_user} = req;
     const { tagName } = req.body;
     try {
         const id_tag = ulid();
@@ -26,8 +25,7 @@ const postTag = async (req, res) => {
 }
 
 const getTags = async (req, res) => {
-
-    let {id_user} =  jwt.verify(req.header('keyToken'),process.env.SECRET_OR_PRIVATEKEY);
+    const {id_user} = req;
     try {
         const tags = await Tag.findAll({
             where:{
