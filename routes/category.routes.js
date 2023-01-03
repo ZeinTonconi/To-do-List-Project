@@ -4,7 +4,6 @@ const { check } = require('express-validator');
 const { validateCamp } = require("../middlewares/validateCamps");
 const { isInDB } = require("../helpers/dbValidator");
 const { checkJWT } = require("../helpers/check-jwt");
-const jwt = require('jsonwebtoken')
 
 const router = Router();
 
@@ -37,8 +36,7 @@ router.put('/:id', [
     check('newCategory', 'La nueva categoria no puede estar vacia').notEmpty(),
     async(req,res,next) => {
         const {id} = req.params;
-        const {id_user} = await jwt.verify(req.header("keyToken"));
-        if(await isInDB('category',{id,id_user}))
+        if(await isInDB('category',{id}))
             next();
         else return res.status(404);
     },
