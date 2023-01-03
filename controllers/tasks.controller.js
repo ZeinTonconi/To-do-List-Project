@@ -57,7 +57,6 @@ const tasksPost = async (req, res) => {
             id_category,
             id_user
         })
-        isAuthorized(req,res,newTask);
         res.status(201).json({
             msg: `Task created`,
             newTask
@@ -169,6 +168,3 @@ module.exports = {
     putCompleteTask,
     addTag
 }
-
-// Terminar Usuarios
-// Subir Imagenes Localmente (funcion Upload imgane local y bucket)

@@ -12,7 +12,6 @@ const postTag = async (req, res) => {
             tagName: tagName,
             id_user
         })
-        isAuthorized(req,res,tag);
         res.status(201).json({
             msg: `Tag has been created`,
             tag

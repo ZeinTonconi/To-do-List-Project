@@ -32,8 +32,7 @@ const categoryPost = async (req, res) => {
             categoryName,
             id_user
         });
-        //const {id_user:a, ...returnCate} = category.dataValues;
-        isAuthorized(req,res,category);
+        const {id_user:a, ...returnCate} = category.dataValues;
         res.status(201).json({
             msg: `The new Category has been created`,
             returnCate
