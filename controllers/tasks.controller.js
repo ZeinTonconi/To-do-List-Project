@@ -1,6 +1,6 @@
 const { ulid } = require("ulid");
+const { isAuthorized } = require("../helpers/auth");
 const {Task, Tag, Category, Image} = require('../models/index.models');
-const jwt = require('jsonwebtoken');
 
 const tasksGet = async (req, res) => {
     const {id_user} = req;
@@ -57,7 +57,7 @@ const tasksPost = async (req, res) => {
             id_category,
             id_user
         })
-
+        isAuthorized(req,res,newTask);
         res.status(201).json({
             msg: `Task created`,
             newTask
@@ -73,11 +73,11 @@ const tasksPost = async (req, res) => {
 const tasksDelete = async (req, res) => {
     const { id } = req.params;
     try {
-        await Task.destroy({
-            where: { 
-                id
-            }
+        const task = await Task.findOne({
+            where: { id }
         })
+        isAuthorized(req,res,task);
+        await Task.destroy(task)
         res.status(201).json({
             msg: `The task has been eliminated`
         })
@@ -102,6 +102,7 @@ const putTask = async (req, res) => {
     }
     try {
         let task = await Task.findByPk(id);
+        isAuthorized(req,res,task);
         if (newDescri)
             task.description = newDescri;
         if (newCategory)
@@ -123,6 +124,7 @@ const putCompleteTask = async (req, res) => {
     const { id } = req.params;
     try {
         const task = await Task.findByPk(id);
+        isAuthorized(req,res,task);
         task.status = !task.status;
         await task.save();
         res.status(200).json({
@@ -144,6 +146,8 @@ const addTag = async (req, res) => {
     try {
         const task = await Task.findByPk(id_task);
         const tag = await Tag.findByPk(id_tag);
+        isAuthorized(req,res,task);
+        isAuthorized(req,res,tag);
         await task.addTag(tag);
         res.status(201).json({
             msg: "Tag added",

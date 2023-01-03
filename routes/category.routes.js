@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken')
 
 const router = Router();
 
-router.get('/', categoryGet);
+router.get('/', checkJWT,categoryGet);
 
 router.post('/', [
     checkJWT,
@@ -22,10 +22,12 @@ router.delete('/:id', [
     validateCamp,
     async (req, res, next) => {
         const { id } = req.params;
-        const {id_user} = await jwt.verify(req.header("keyToken"));
-        if (await isInDB('category', { id, id_user }))
+        if (await isInDB('category', { id })){
             next();
-        else return res.status(404);
+        }
+        else return res.status(404).json({
+            msg: "Not Found!!"
+        });
     }
 ], categoryDelete)
 

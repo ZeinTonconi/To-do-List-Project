@@ -1,6 +1,6 @@
 const { ulid } = require("ulid");
+const { isAuthorized } = require("../helpers/auth");
 const Tag = require('../models/Tag')
-const jwt = require('jsonwebtoken');
 
 const postTag = async (req, res) => {
     const {id_user} = req;
@@ -12,6 +12,7 @@ const postTag = async (req, res) => {
             tagName: tagName,
             id_user
         })
+        isAuthorized(req,res,tag);
         res.status(201).json({
             msg: `Tag has been created`,
             tag
