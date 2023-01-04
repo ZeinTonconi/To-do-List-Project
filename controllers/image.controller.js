@@ -1,19 +1,25 @@
 const { ulid } = require('ulid');
 const Image = require('../models/Image');
-const {uploadImg} = require('../helpers/uploadImg')
 
 const fs = require('fs')
 
 const imagePost = async (req,res) => {
-    const {imgName} = req.body;
     const {id_task} = req.params;
     try {
+        if(!req.files.file){
+            return res.status(400).json({
+                msg: "There is no Image"
+            })
+        }
         const id_img = ulid();
-        const imgDBName = await uploadImg(req);
-        const img = await Image.create({
+        const image = req.files.file;
+        const location = `./uploads/${image.name}`;
+        image.mv(location);
+
+        const img =await Image.create({
             id: id_img,
-            imgName,
-            imgDBName,
+            imgName: image.name,
+            location,
             id_task
         })
         res.status(201).json({
@@ -29,25 +35,25 @@ const imagePost = async (req,res) => {
 }
 
 const imageDelete = async (req,res) => {
-    const {imgId} = req.params  ;
+    const {imgId} = req.params;
     try {
         const img = await Image.findOne({
             where:{
                 id: imgId
             }
         })
-        if(img == null){
+        if(img === null){
             throw new Error("Doesn't exist the Image in the DB");
         }
-        const {id, imgName, imgDBName} = img.dataValues;
-        const uploadsPath = __dirname + `/../uploads/${imgDBName}`;
-        //const uploadsPath = `../uploads/${imgDBName}`;
-        const optimizePath = __dirname + `/../optimize/resize-${imgDBName}`;
-        //const optimizePath = `../optimize/resize-${imgDBName}`;
-        if(fs.existsSync(uploadsPath))
-            fs.unlinkSync(uploadsPath);
-        if(fs.existsSync(optimizePath))
-            fs.unlinkSync(optimizePath);
+        // const {id, imgName, imgDBName} = img.dataValues;
+        // const uploadsPath = __dirname + `/../uploads/${imgDBName}`;
+        // const uploadsPath = `../uploads/${imgDBName}`;
+        // const optimizePath = __dirname + `/../optimize/resize-${imgDBName}`;
+        // const optimizePath = `../optimize/resize-${imgDBName}`;
+        if(fs.existsSync(img.location))
+            fs.unlinkSync(img.location);
+        // if(fs.existsSync(optimizePath))
+        //     fs.unlinkSync(optimizePath);
         await Image.destroy({
             where:{
                 id: imgId

@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const sequelize = require('./database/config.js');
+const fileUpload = require('express-fileupload')
+const bodyParser = require('body-parser')
 
 require('./models/index.models');
 
@@ -41,6 +43,14 @@ class Server {
         this.app.use(cors());
 
         this.app.use(express.json());
+
+        this.app.use(fileUpload({
+            createParentPath: true
+        }));
+
+        this.app.use(bodyParser.json());
+
+        this.app.use(bodyParser.urlencoded({extended: true}));
 
         this.app.use(express.static('public'))
     }
