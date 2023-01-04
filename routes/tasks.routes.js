@@ -113,7 +113,6 @@ router.delete('/:id', [
 
 router.post('/:id_task/addImage',[
     checkJWT,
-    check('imgName', `Must specified the image's Name`).notEmpty(),
     async(req,res, next) => {
         const {id_task} = req.params;
         try {
@@ -122,8 +121,7 @@ router.post('/:id_task/addImage',[
         } catch (error) {   
             return res.status(404);
         }
-    },
-    upload.single('file')
+    }
 ],imagePost)
 
 module.exports = router
