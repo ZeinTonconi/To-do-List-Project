@@ -1,11 +1,9 @@
+const { ErrorResponse } = require("../ErrorResponse");
 
 
-const isAuthorized = (req,res, object) => {
+const isAuthorized = (req, object) => {
     if(object.id_user !== req.id_user){
-        throw new Error("You are not authorized!");
-        /*return res.status(403).json({
-            msg: "You are not authorized!!"
-        })*/
+        throw new ErrorResponse("You are not authorized!",403);
     }
 }
 

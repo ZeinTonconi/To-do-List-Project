@@ -25,10 +25,7 @@ const tasksGet = async (req, res) => {
                 }
             },
             {
-                model: Image,
-                attributes: [
-                    "id", "imgName", "imgDBName"
-                ]       
+                model: Image     
             }
         ],
             
@@ -38,9 +35,12 @@ const tasksGet = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
-        res.status(404).json({
-            msg: "Not Found"
+        if(!(error instanceof ErrorResponse)){
+            error=new ErrorResponse("Error trying to get all tasks",500,{error});
+        }
+        res.status(error.errorType).json({
+            msg: error.message,
+            reasons: error.reasons
         })
     }
 }
@@ -62,9 +62,12 @@ const tasksPost = async (req, res) => {
             newTask
         })
     } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            msg: "Error trying to create a task"
+        if(!(error instanceof ErrorResponse)){
+            error=new ErrorResponse("Error trying to create a task",500,{error});
+        }
+        res.status(error.errorType).json({
+            msg: error.message,
+            reasons: error.reasons
         })
     }
 }
@@ -81,9 +84,12 @@ const tasksDelete = async (req, res) => {
             msg: `The task has been eliminated`
         })
     } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            msg: `Error trying to delete the task`
+        if(!(error instanceof ErrorResponse)){
+            error=new ErrorResponse("Error trying to delete the task",500,{error});
+        }
+        res.status(error.errorType).json({
+            msg: error.message,
+            reasons: error.reasons
         })
     }
 }
@@ -112,9 +118,12 @@ const putTask = async (req, res) => {
             task
         })
     } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            msg: 'DB Error'
+        if(!(error instanceof ErrorResponse)){
+            error=new ErrorResponse("Error trying to update the task",500,{error});
+        }
+        res.status(error.errorType).json({
+            msg: error.message,
+            reasons: error.reasons
         })
     }
 }
@@ -132,9 +141,12 @@ const putCompleteTask = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            msg: "DB Error"
+        if(!(error instanceof ErrorResponse)){
+            error=new ErrorResponse("Error trying to complete/uncomplete the task",500,{error});
+        }
+        res.status(error.errorType).json({
+            msg: error.message,
+            reasons: error.reasons
         })
     }
 }
@@ -153,9 +165,12 @@ const addTag = async (req, res) => {
             task
         })
     } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            msg: "Error trying to add a tag to a task"
+        if(!(error instanceof ErrorResponse)){
+            error=new ErrorResponse("Error trying to add a tag to the task",500,{error});
+        }
+        res.status(error.errorType).json({
+            msg: error.message,
+            reasons: error.reasons
         })
     }
 }

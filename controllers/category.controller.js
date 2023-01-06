@@ -2,6 +2,7 @@ const { ulid } = require("ulid");
 const Category = require("../models/Category");
 const jwt = require('jsonwebtoken');
 const { isAuthorized } = require("../helpers/auth");
+const { ErrorResponse } = require("../ErrorResponse");
 
 
 const categoryGet = async (req, res) => {
@@ -17,7 +18,8 @@ const categoryGet = async (req, res) => {
         })
     } catch (error) {
         res.status(500).json({
-            msg: "Error in DB"
+            msg: "Error in DB",
+            error
         })
     }
 }
@@ -39,9 +41,9 @@ const categoryPost = async (req, res) => {
         })
     }
     catch (error) {
-        console.log(error);
         res.status(500).json({
-            msg: "Error trying to create a category"
+            msg: "Error trying to create a category",
+            error
         })
     }
 
@@ -62,9 +64,11 @@ const categoryDelete = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(500).json({
-            msg: `Error trying to delete a category`,
-            error
+        if(!(error instanceof ErrorResponse)){
+            error=new ErrorResponse("Error trying to delete the category",500,{error});
+        }
+        res.status(error.errorType).json({
+            msg: error.message
         })
     }
 }
@@ -82,9 +86,11 @@ const categoryPut = async (req, res) => {
             category
         })
     } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            msg: "Error trying to update the category"
+        if(!(error instanceof ErrorResponse)){
+            error=new ErrorResponse("Error trying to update a category",500,{error});
+        }
+        res.status(error.errorType).json({
+            msg: error.message
         })
     }
 }

@@ -1,6 +1,7 @@
 const { generateJWT } = require("../helpers/generateJWT");
 const User = require("../models/User");
-const {ulid} = require('ulid')
+const {ulid} = require('ulid');
+const { ErrorResponse } = require("../ErrorResponse");
 
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -13,7 +14,7 @@ const login = async (req, res) => {
             }
         })
         if(!user){
-            throw "User Not Found!";
+            throw new ErrorResponse("User Not Found!",404);
         }
         const token = await generateJWT(user.id);
         res.status(200).json({
@@ -21,10 +22,16 @@ const login = async (req, res) => {
             token
         })
     } catch (error) {
-        console.log(error);
-        res.status(404).json({
-            msg: error
-        })
+        if(error instanceof ErrorResponse){
+            res.status(error.errorType).json({
+                msg: error.message
+            })
+        }
+        else{
+            res.status(500).json({
+                msg: error
+            })
+        }
     }
 }
 
