@@ -78,7 +78,7 @@ const tasksDelete = async (req, res) => {
         const task = await Task.findOne({
             where: { id }
         })
-        isAuthorized(req,res,task);
+        isAuthorized(req,task);
         await Task.destroy(task)
         res.status(201).json({
             msg: `The task has been eliminated`
@@ -107,7 +107,7 @@ const putTask = async (req, res) => {
     }
     try {
         let task = await Task.findByPk(id);
-        isAuthorized(req,res,task);
+        isAuthorized(req,task);
         if (newDescri)
             task.description = newDescri;
         if (newCategory)
@@ -132,7 +132,7 @@ const putCompleteTask = async (req, res) => {
     const { id } = req.params;
     try {
         const task = await Task.findByPk(id);
-        isAuthorized(req,res,task);
+        isAuthorized(req,task);
         task.status = !task.status;
         await task.save();
         res.status(200).json({
@@ -157,8 +157,8 @@ const addTag = async (req, res) => {
     try {
         const task = await Task.findByPk(id_task);
         const tag = await Tag.findByPk(id_tag);
-        isAuthorized(req,res,task);
-        isAuthorized(req,res,tag);
+        isAuthorized(req,task);
+        isAuthorized(req,tag);
         await task.addTag(tag);
         res.status(201).json({
             msg: "Tag added",
