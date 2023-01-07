@@ -14,7 +14,7 @@ const errorHandler = (error, req, res, next) => {
     //     })
     // }
 
-    reportError(error);
+    reportError(error, req);
     return res.status(500).json({
         msg: error.message,
         reasons: error.reasons
