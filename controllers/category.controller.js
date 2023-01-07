@@ -3,9 +3,10 @@ const Category = require("../models/Category");
 const jwt = require('jsonwebtoken');
 const { isAuthorized } = require("../helpers/auth");
 const { ErrorResponse } = require("../ErrorResponse");
+const { errorHandler } = require("../middlewares/errorHandler");
 
 
-const categoryGet = async (req, res) => {
+const categoriesGet = async (req, res) => {
     const {id_user}=req;
     try {
         const categories = await Category.findAll({
@@ -24,11 +25,42 @@ const categoryGet = async (req, res) => {
     }
 }
 
+const categoryGet = async (req, res) => {
+    const {id_user}=req;
+    const {id} = req.params;
+    console.log(id_user);
+    
+    try {
+        const category = await Category.findOne({
+            where: {
+                id
+            }
+        });
+        if(!category){
+            throw new ErrorResponse("Category does not exist",404);
+        }    
+    } catch (error) {
+        
+        throw error;
+        
+        
+        // res.status(500).json({
+        //     msg: "Error in DB",
+        //     error
+        // })
+    }
+    res.status(200).json({
+        category
+    })
+}
+
 const categoryPost = async (req, res) => {
     const { categoryName } = req.body;
     const {id_user} = req;
+    
     const id_category = ulid();
     try {
+
         const category = await Category.create({
             id: id_category,
             categoryName,
@@ -100,5 +132,6 @@ module.exports = {
     categoryGet,
     categoryPost,
     categoryDelete,
-    categoryPut
+    categoryPut,
+    categoriesGet
 }

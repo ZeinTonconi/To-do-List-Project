@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { categoryGet, categoryPost, categoryDelete, categoryPut } = require("../controllers/category.controller");
+const { categoryGet, categoryPost, categoryDelete, categoryPut, categoriesGet } = require("../controllers/category.controller");
 const { check } = require('express-validator');
 const { validateCamp } = require("../middlewares/validateCamps");
 const { isInDB } = require("../helpers/dbValidator");
@@ -7,7 +7,9 @@ const { checkJWT } = require("../helpers/check-jwt");
 
 const router = Router();
 
-router.get('/', checkJWT,categoryGet);
+// router.get('/', checkJWT,categoriesGet);
+
+router.get('/:id',[checkJWT],categoryGet);
 
 router.post('/', [
     checkJWT,

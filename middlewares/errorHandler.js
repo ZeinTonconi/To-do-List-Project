@@ -2,6 +2,7 @@ const {validationResult} = require('express-validator');
 const {ErrorResponse} = require("../ErrorResponse");
 
 const errorHandler = (error, req, res, next) => {
+    console.log("error", error);
     if (error instanceof ErrorResponse) {
         return res.status(400).json({
             msg: error.message,
