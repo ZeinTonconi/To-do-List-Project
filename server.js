@@ -2,9 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const sequelize = require('./database/config.js');
+const {errorHandler} = require("./middlewares/errorHandler");
 
 require('./models/index.models');
-
 
 
 /*
@@ -31,9 +31,14 @@ class Server {
 
     async init() {
 
-        await sequelize.sync({ force: false });
+        await sequelize.sync({force: false});
         this.middlewares();
         this.routes();
+        this.middlewaresErrorHandler();
+    }
+
+    middlewaresErrorHandler() {
+        this.app.use(errorHandler);
     }
 
     middlewares() {
@@ -46,7 +51,7 @@ class Server {
     }
 
     getConnection = (req, res, next) => {
-        const { pool, connection } = this.connection;
+        const {pool, connection} = this.connection;
         req.pool = pool;
         req.connection = connection;
         next();
