@@ -1,6 +1,7 @@
 const {DataTypes} = require('sequelize');
 const sequelize = require('../database/config');
-const Task = require('./Task')
+const Task = require('./Task');
+const User = require('./User');
 
 const Category = sequelize.define('categories', {
     id: {
@@ -23,6 +24,16 @@ Task.belongsTo(Category,{
 Category.hasMany(Task,{
     foreignKey: 'id_category',
     sourceKey: 'id'
+})
+
+User.hasMany(Category,{
+    foreignKey: "id_user",
+    sourceKey: "id"
+});
+
+Category.belongsTo(User,{
+    foreignKey: "id_user",
+    targetKey: "id"
 })
 
 module.exports = Category;

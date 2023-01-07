@@ -7,6 +7,7 @@ const { checkJWT } = require('../helpers/check-jwt');
 const { isInDB } = require('../helpers/dbValidator');
 const { upload } = require('../helpers/uploadImg');
 const { validateCamp } = require('../middlewares/validateCamps');
+const jwt = require('jsonwebtoken');
 
 
 const router = Router();
@@ -23,13 +24,16 @@ router.post('/', [
     validateCamp,
     async (req, res, next) => {
         try {
+            const {id_user} = req;
             if (await isInDB('category', {
-                id: req.body.id_category
+                id: req.body.id_category,
+                id_user
             })) next();
             else return res.status(404).json({
                 msg: "Not Found"
             })
         } catch (error) {
+            console.log(error);
             return res.status(500).json({
                 msg: "DB Error"
             })
@@ -50,20 +54,21 @@ router.put('/:id', [
 
     async (req, res, next) => {
         const { id } = req.params;
+        const {id_user} = req;
         try {
-            if (await isInDB('task', { id }))
+            if (await isInDB('task', { id, id_user }))
                 next();
             else
                 return res.status(404);
         } catch (error) {
-            console.log(error);
             return res.status(500);
         }
     },
     async (req, res, next) => {
         const { id_category } = req.body; 
+        const {id_user} = req;
         try {
-            if (!id_category || await isInDB('category', { id_category }))
+            if (!id_category || await isInDB('category', { id:id_category,id_user }))
                 next();
             else
                 return res.status(404);
@@ -81,8 +86,9 @@ router.put('/:id/complete', [
     validateCamp,
     async(req,res,next) => {
         const {id}=req.params.id;
+        const {id_user} = req;
         try {
-            if(await isInDB('task', {id})) next();
+            if(await isInDB('task', {id, id_user})) next();
             else res.status(404);
         } catch (error) {
             console.log(error);
@@ -97,8 +103,9 @@ router.delete('/:id', [
     validateCamp,
     async(req,res,next) => {
         const {id}=req.params;
+        const {id_user} = req;
         try {
-            if(await isInDB('task', {id})) next();
+            if(await isInDB('task', {id,id_user})) next();
             else return res.status(404).json({
                 msg: "Not Found"
             });
@@ -116,8 +123,9 @@ router.post('/:id_task/addImage',[
     check('imgName', `Must specified the image's Name`).notEmpty(),
     async(req,res, next) => {
         const {id_task} = req.params;
+        const {id_user} = req;
         try {
-            if(await isInDB('task', {id:id_task})) next();
+            if(await isInDB('task', {id:id_task,id_user})) next();
             else return req.status(404);
         } catch (error) {   
             return res.status(404);

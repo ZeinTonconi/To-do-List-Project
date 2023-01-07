@@ -1,15 +1,17 @@
 const { ulid } = require("ulid");
+const { isAuthorized } = require("../helpers/auth");
 const Tag = require('../models/Tag')
 
 const postTag = async (req, res) => {
+    const {id_user} = req;
     const { tagName } = req.body;
     try {
         const id_tag = ulid();
         const tag = await Tag.create({
             id: id_tag,
-            tagName: tagName
+            tagName: tagName,
+            id_user
         })
-        console.log(tag.tagName, tagName);
         res.status(201).json({
             msg: `Tag has been created`,
             tag
@@ -23,8 +25,13 @@ const postTag = async (req, res) => {
 }
 
 const getTags = async (req, res) => {
+    const {id_user} = req;
     try {
-        const tags = await Tag.findAll();
+        const tags = await Tag.findAll({
+            where:{
+                id_user
+            }
+        });
         res.status(200).json({
             tags
         })
