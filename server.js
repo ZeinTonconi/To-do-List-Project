@@ -1,11 +1,10 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const sequelize = require('./database/config.js');
-const {errorHandler} = require("./middlewares/errorHandler");
+require('dotenv').config()
+const express = require('express')
+const cors = require('cors')
+const sequelize = require('./database/config.js')
+const { errorHandler } = require('./middlewares/errorHandler')
 
-require('./models/index.models');
-
+require('./models/index.models')
 
 /*
 app.get('*', function(req, res){
@@ -14,68 +13,62 @@ app.get('*', function(req, res){
 */
 
 class Server {
+  constructor () {
+    this.port = process.env.APP_PORT
+    this.app = express()
 
-    constructor() {
-        this.port = process.env.APP_PORT;
-        this.app = express();
+    this.taskPath = '/api/tasks'
+    this.authPath = '/api/auth'
+    this.categoryPath = '/api/category'
+    this.tagPath = '/api/tag'
+    this.imagePath = '/api/image'
 
-        this.taskPath = '/api/tasks';
-        this.authPath = '/api/auth';
-        this.categoryPath = '/api/category';
-        this.tagPath = '/api/tag';
-        this.imagePath = '/api/image';
+    this.init()
+  }
 
-        this.init();
-    }
+  async init () {
+    await sequelize.sync({ force: false })
+    this.middlewares()
+    this.routes()
+    this.middlewaresErrorHandler()
+  }
 
+  middlewaresErrorHandler () {
+    this.app.use(errorHandler)
+  }
 
-    async init() {
+  middlewares () {
+    this.app.use(cors())
 
-        await sequelize.sync({force: false});
-        this.middlewares();
-        this.routes();
-        this.middlewaresErrorHandler();
-    }
+    this.app.use(express.json())
 
-    middlewaresErrorHandler() {
-        this.app.use(errorHandler);
-    }
+    this.app.use(express.static('public'))
+  }
 
-    middlewares() {
+  getConnection = (req, res, next) => {
+    const { pool, connection } = this.connection
+    req.pool = pool
+    req.connection = connection
+    next()
+  }
 
-        this.app.use(cors());
+  routes () {
+    this.app.use(this.taskPath, require('./routes/tasks.routes'))
 
-        this.app.use(express.json());
+    this.app.use(this.authPath, require('./routes/auth.routes'))
 
-        this.app.use(express.static('public'))
-    }
+    this.app.use(this.categoryPath, require('./routes/category.routes'))
 
-    getConnection = (req, res, next) => {
-        const {pool, connection} = this.connection;
-        req.pool = pool;
-        req.connection = connection;
-        next();
-    }
+    this.app.use(this.tagPath, require('./routes/tags.routes'))
 
-    routes() {
-        this.app.use(this.taskPath, require('./routes/tasks.routes'));
+    this.app.use(this.imagePath, require('./routes/image.routes'))
+  }
 
-        this.app.use(this.authPath, require('./routes/auth.routes'));
-
-        this.app.use(this.categoryPath, require('./routes/category.routes'));
-
-        this.app.use(this.tagPath, require('./routes/tags.routes'));
-
-        this.app.use(this.imagePath, require('./routes/image.routes'));
-    }
-
-    start() {
-        this.app.listen(this.port, () => {
-            console.log(`Server online on port ${this.port}`);
-        })
-    }
-
-
+  start () {
+    this.app.listen(this.port, () => {
+      console.log(`Server online on port ${this.port}`)
+    })
+  }
 }
 
-module.exports = Server;
+module.exports = Server
