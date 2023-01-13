@@ -3,7 +3,7 @@ const { ErrorResponse } = require('../ErrorResponse')
 const errorHandler = (error, req, res, next) => {
   console.log('error', error)
   if (error instanceof ErrorResponse) {
-    return res.status(400).json({
+    return res.status(error.errorType).json({
       msg: error.message,
       reasons: error.reasons
     })
@@ -16,13 +16,12 @@ const errorHandler = (error, req, res, next) => {
 
   reportError(error, req)
   return res.status(500).json({
-    msg: error.message,
-    reasons: error.reasons
+    msg: error.message
   })
 }
 
 const reportError = (error, req) => {
-  console.log('error server', error, req)
+  console.log('error server', { error, req })
 }
 
 module.exports = {

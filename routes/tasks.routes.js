@@ -3,9 +3,9 @@ const { Router } = require('express')
 const { check } = require('express-validator')
 const { imagePost } = require('../controllers/image.controller')
 const { tasksGet, tasksPost, tasksDelete, putTask, putCompleteTask, addTag } = require('../controllers/tasks.controller')
+const { ErrorResponse } = require('../ErrorResponse')
 const { checkJWT } = require('../helpers/check-jwt')
 const { isInDB } = require('../helpers/dbValidator')
-const { upload } = require('../helpers/uploadImg')
 const { validateCamp } = require('../middlewares/validateCamps')
 
 const router = Router()
@@ -17,25 +17,20 @@ router.get('/', [
 router.post('/', [
   checkJWT,
   check('descr', 'La Tarea necesita una descripcion').notEmpty(),
-  check('id_category', 'La Tarea necesita una categoria').notEmpty(),
+  check('idCategory', 'La Tarea necesita una categoria').notEmpty(),
   validateCamp,
   async (req, res, next) => {
     try {
       const { idUser } = req
       if (await isInDB('category', {
         id: req.body.id_category,
-        id_user: idUser
+        id_u: idUser
       })) next()
       else {
-        return res.status(404).json({
-          msg: 'Not Found'
-        })
+        throw new ErrorResponse('Category does not exist', 404)
       }
     } catch (error) {
-      console.log(error)
-      return res.status(500).json({
-        msg: 'DB Error'
-      })
+      next(error)
     }
   }
 ], tasksPost)
@@ -50,28 +45,13 @@ router.put('/:id', [
   checkJWT,
   check('id', 'El id esta vacio').notEmpty(),
   validateCamp,
-
-  async (req, res, next) => {
-    const { id } = req.params
-    const { idUser } = req
-    try {
-      if (await isInDB('task', { id, id_user: idUser })) {
-        next()
-      } else {
-        return res.status(404)
-      }
-    } catch (error) {
-      return res.status(500)
-    }
-  },
   async (req, res, next) => {
     const { idCategory } = req.body
     const { idUser } = req
     try {
-      if (!idCategory || await isInDB('category', { id: idCategory, id_user: idUser })) { next() } else { return res.status(404) }
+      if (!idCategory || await isInDB('category', { id: idCategory, id_user: idUser })) { next() } else { throw new ErrorResponse('Category does not exist', 404) }
     } catch (error) {
-      console.log(error)
-      return res.status(500)
+      next(error)
     }
   }
 ], putTask)
@@ -79,57 +59,24 @@ router.put('/:id', [
 router.put('/:id/complete', [
   checkJWT,
   check('id', 'El id esta vacio').notEmpty(),
-  validateCamp,
-  async (req, res, next) => {
-    const { id } = req.params.id
-    const { idUser } = req
-    try {
-      if (await isInDB('task', { id, id_user: idUser })) next()
-      else res.status(404)
-    } catch (error) {
-      console.log(error)
-      return res.status(500)
-    }
-  }
+  validateCamp
 ], putCompleteTask)
 
 router.delete('/:id', [
   checkJWT,
   check('id', 'El id esta vacio').notEmpty(),
-  validateCamp,
-  async (req, res, next) => {
-    const { id } = req.params
-    const { idUser } = req
-    try {
-      if (await isInDB('task', { id, id_user: idUser })) next()
-      else {
-        return res.status(404).json({
-          msg: 'Not Found'
-        })
-      }
-    } catch (error) {
-      console.log(error)
-      return res.status(500).json({
-        error
-      })
-    }
-  }
+  validateCamp
 ], tasksDelete)
 
-router.post('/:id_task/addImage', [
+router.post('/:idTask/addImage', [
   checkJWT,
-  check('imgName', 'Must specified the image\'s Name').notEmpty(),
   async (req, res, next) => {
-    const { idTask } = req.params
-    const { idUser } = req
     try {
-      if (await isInDB('task', { id: idTask, id_user: idUser })) next()
-      else return req.status(404)
+      if (await isInDB('task', { id: req.params.idTask, id_user: req.idUser })) { next() } else throw new ErrorResponse('Task does not exist', 404)
     } catch (error) {
-      return res.status(404)
+      next(error)
     }
-  },
-  upload.single('file')
+  }
 ], imagePost)
 
 module.exports = router

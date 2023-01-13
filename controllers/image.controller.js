@@ -1,34 +1,40 @@
 const { ulid } = require('ulid')
 const Image = require('../models/Image')
-const { uploadImg } = require('../helpers/uploadImg')
+require('express')
+require('express-fileupload')
 
 const fs = require('fs')
+const { ErrorResponse } = require('../ErrorResponse')
+const path = require('path')
 
-const imagePost = async (req, res) => {
-  const { imgName } = req.body
-  const { id_task } = req.params
+const imagePost = async (req, res, next) => {
+  const { idTask } = req.params
   try {
-    const id_img = ulid()
-    const imgDBName = await uploadImg(req)
+    if (!req.files.file) {
+      throw new ErrorResponse('There is no image', 400)
+    }
+
+    const idImg = ulid()
+    const image = req.files.file
+    const location = `./uploads/${image.name}`
+    image.mv(location)
+
     const img = await Image.create({
-      id: id_img,
-      imgName,
-      imgDBName,
-      id_task
+      id: idImg,
+      imgName: image.name,
+      location,
+      id_task: idTask
     })
     res.status(201).json({
       msg: 'Image created',
       img
     })
   } catch (error) {
-    console.log(error)
-    res.status(500).json({
-      msg: 'Database Error'
-    })
+    next(error)
   }
 }
 
-const imageDelete = async (req, res) => {
+const imageDelete = async (req, res, next) => {
   const { imgId } = req.params
   try {
     const img = await Image.findOne({
@@ -36,16 +42,13 @@ const imageDelete = async (req, res) => {
         id: imgId
       }
     })
-    if (img == null) {
-      throw new Error("Doesn't exist the Image in the DB")
+    if (!img) {
+      throw new ErrorResponse("Doesn't exist the Image", 404)
     }
-    const { id, imgName, imgDBName } = img.dataValues
-    const uploadsPath = __dirname + `/../uploads/${imgDBName}`
+    const { imgName } = img.dataValues
+    const uploadsPath = path.join(__dirname, `/../uploads/${imgName}`)
     // const uploadsPath = `../uploads/${imgDBName}`;
-    const optimizePath = __dirname + `/../optimize/resize-${imgDBName}`
-    // const optimizePath = `../optimize/resize-${imgDBName}`;
     if (fs.existsSync(uploadsPath)) { fs.unlinkSync(uploadsPath) }
-    if (fs.existsSync(optimizePath)) { fs.unlinkSync(optimizePath) }
     await Image.destroy({
       where: {
         id: imgId
@@ -55,10 +58,7 @@ const imageDelete = async (req, res) => {
       msg: 'Image Deleted'
     })
   } catch (error) {
-    console.log(error)
-    res.status(500).json({
-      msg: 'DataBase Error'
-    })
+    next(error)
   }
 }
 

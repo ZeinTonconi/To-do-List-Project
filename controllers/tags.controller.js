@@ -1,7 +1,7 @@
 const { ulid } = require('ulid')
 const Tag = require('../models/Tag')
 
-const postTag = async (req, res) => {
+const postTag = async (req, res, next) => {
   const { idUser } = req
   const { tagName } = req.body
   try {
@@ -16,14 +16,11 @@ const postTag = async (req, res) => {
       tag
     })
   } catch (error) {
-    console.log(error)
-    res.status(500).json({
-      msg: 'Error trying to create a tag'
-    })
+    next(error)
   }
 }
 
-const getTags = async (req, res) => {
+const getTags = async (req, res, next) => {
   const { idUser } = req
   try {
     const tags = await Tag.findAll({
@@ -35,10 +32,7 @@ const getTags = async (req, res) => {
       tags
     })
   } catch (error) {
-    console.log(error)
-    res.status(500).json({
-      msg: 'DB Error'
-    })
+    next(error)
   }
 }
 

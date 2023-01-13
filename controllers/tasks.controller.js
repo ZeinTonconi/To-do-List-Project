@@ -3,7 +3,7 @@ const { ErrorResponse } = require('../ErrorResponse')
 const { isAuthorized } = require('../helpers/auth')
 const { Task, Tag, Category, Image } = require('../models/index.models')
 
-const tasksGet = async (req, res) => {
+const tasksGet = async (req, res, next) => {
   const { idUser } = req
   try {
     const tasks = await Task.findAll({
@@ -35,19 +35,11 @@ const tasksGet = async (req, res) => {
       tasks
     })
   } catch (error) {
-    let returnError = error
-    if (!(error instanceof ErrorResponse)) {
-      console.log(error)
-      returnError = new ErrorResponse('Error trying to get all tasks', 500, { error })
-    }
-    res.status(returnError.errorType).json({
-      msg: returnError.message,
-      reasons: returnError.reasons
-    })
+    next(error)
   }
 }
 
-const tasksPost = async (req, res) => {
+const tasksPost = async (req, res, next) => {
   const { idUser } = req
   const { descr, idCategory } = req.body
   try {
@@ -63,43 +55,30 @@ const tasksPost = async (req, res) => {
       newTask
     })
   } catch (error) {
-    let returnError = error
-    if (!(error instanceof ErrorResponse)) {
-      console.log(error)
-      returnError = new ErrorResponse('Error trying to create the tasks', 500, { error })
-    }
-    res.status(returnError.errorType).json({
-      msg: returnError.message,
-      reasons: returnError.reasons
-    })
+    next(error)
   }
 }
 
-const tasksDelete = async (req, res) => {
+const tasksDelete = async (req, res, next) => {
   const { id } = req.params
   try {
     const task = await Task.findOne({
       where: { id }
     })
+    if (!task) {
+      throw new ErrorResponse('Task does not exist', 404)
+    }
     isAuthorized(req, task)
     await Task.destroy(task)
     res.status(201).json({
       msg: 'The task has been eliminated'
     })
   } catch (error) {
-    let returnError = error
-    if (!(error instanceof ErrorResponse)) {
-      console.log(error)
-      returnError = new ErrorResponse('Error trying to delete the tasks', 500, { error })
-    }
-    res.status(returnError.errorType).json({
-      msg: returnError.message,
-      reasons: returnError.reasons
-    })
+    next(error)
   }
 }
 
-const putTask = async (req, res) => {
+const putTask = async (req, res, next) => {
   const { id } = req.params
   const { newDescri, newCategory } = req.body
   if (!newDescri && !newCategory) {
@@ -110,6 +89,9 @@ const putTask = async (req, res) => {
   }
   try {
     const task = await Task.findByPk(id)
+    if (!task) {
+      throw new ErrorResponse('Task does not exist', 404)
+    }
     isAuthorized(req, task)
     if (newDescri) { task.description = newDescri }
     if (newCategory) { task.id_category = newCategory }
@@ -119,22 +101,17 @@ const putTask = async (req, res) => {
       task
     })
   } catch (error) {
-    let returnError = error
-    if (!(error instanceof ErrorResponse)) {
-      console.log(error)
-      returnError = new ErrorResponse('Error trying to update the task', 500, { error })
-    }
-    res.status(returnError.errorType).json({
-      msg: returnError.message,
-      reasons: returnError.reasons
-    })
+    next(error)
   }
 }
 
-const putCompleteTask = async (req, res) => {
+const putCompleteTask = async (req, res, next) => {
   const { id } = req.params
   try {
     const task = await Task.findByPk(id)
+    if (!task) {
+      throw new ErrorResponse('Task does not exist', 404)
+    }
     isAuthorized(req, task)
     task.status = !task.status
     await task.save()
@@ -143,24 +120,22 @@ const putCompleteTask = async (req, res) => {
       task
     })
   } catch (error) {
-    let returnError = error
-    if (!(error instanceof ErrorResponse)) {
-      console.log(error)
-      returnError = new ErrorResponse('Error trying to complete/uncomplete all tasks', 500, { error })
-    }
-    res.status(returnError.errorType).json({
-      msg: returnError.message,
-      reasons: returnError.reasons
-    })
+    next(error)
   }
 }
 
-const addTag = async (req, res) => {
+const addTag = async (req, res, next) => {
   const idTask = req.params.idTask
   const { idTag } = req.body
   try {
     const task = await Task.findByPk(idTask)
     const tag = await Tag.findByPk(idTag)
+    if (!task) {
+      throw new ErrorResponse('Task does not exist', 404)
+    }
+    if (!tag) {
+      throw new ErrorResponse('Tag does not exist', 404)
+    }
     isAuthorized(req, task)
     isAuthorized(req, tag)
     await task.addTag(tag)
@@ -169,15 +144,7 @@ const addTag = async (req, res) => {
       task
     })
   } catch (error) {
-    let returnError = error
-    if (!(error instanceof ErrorResponse)) {
-      console.log(error)
-      returnError = new ErrorResponse('Error trying to add the tag to the task', 500, { error })
-    }
-    res.status(returnError.errorType).json({
-      msg: returnError.message,
-      reasons: returnError.reasons
-    })
+    next(error)
   }
 }
 

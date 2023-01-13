@@ -3,26 +3,23 @@ const Category = require('../models/Category')
 const { isAuthorized } = require('../helpers/auth')
 const { ErrorResponse } = require('../ErrorResponse')
 
-const categoriesGet = async (req, res) => {
+const categoriesGet = async (req, res, next) => {
   const { idUser } = req
   try {
     const categories = await Category.findAll({
       where: {
-        idUser
+        id_user: idUser
       }
     })
     res.status(200).json({
       categories
     })
   } catch (error) {
-    res.status(500).json({
-      msg: 'Error in DB',
-      error
-    })
+    next(error)
   }
 }
 
-const categoryGet = async (req, res) => {
+const categoryGet = async (req, res, next) => {
   const { idUser } = req
   const { id } = req.params
 
@@ -30,7 +27,7 @@ const categoryGet = async (req, res) => {
     const category = await Category.findOne({
       where: {
         id,
-        idUser
+        id_user: idUser
       }
     })
     if (!category) {
@@ -41,16 +38,11 @@ const categoryGet = async (req, res) => {
       category
     })
   } catch (error) {
-    // throw error
-
-    // res.status(500).json({
-    //     msg: "Error in DB",
-    //     error
-    // })
+    next(error)
   }
 }
 
-const categoryPost = async (req, res) => {
+const categoryPost = async (req, res, next) => {
   const { categoryName } = req.body
   const { idUser } = req
 
@@ -61,25 +53,24 @@ const categoryPost = async (req, res) => {
       categoryName,
       id_user: idUser
     })
-    const { id_user: a, ...returnCate } = category.dataValues
     res.status(201).json({
       msg: 'The new Category has been created',
-      returnCate
+      category
     })
   } catch (error) {
-    res.status(500).json({
-      msg: 'Error trying to create a category',
-      error
-    })
+    next(error)
   }
 }
 
-const categoryDelete = async (req, res) => {
+const categoryDelete = async (req, res, next) => {
   const { id } = req.params
   try {
     const category = await Category.findOne({
       where: { id }
     })
+    if (!category) {
+      throw new ErrorResponse('Category does not exist', 404)
+    }
     isAuthorized(req, category)
     await category.destroy()
     res.status(200).json({
@@ -87,23 +78,18 @@ const categoryDelete = async (req, res) => {
       category
     })
   } catch (error) {
-    let returnError = error
-    if (!(error instanceof ErrorResponse)) {
-      console.log(error)
-      returnError = new ErrorResponse('Error trying to delete the category', 500, { error })
-    }
-    res.status(returnError.errorType).json({
-      msg: returnError.message,
-      reasons: returnError.reasons
-    })
+    next(error)
   }
 }
 
-const categoryPut = async (req, res) => {
+const categoryPut = async (req, res, next) => {
   const { id } = req.params
   const { newCategory } = req.body
   try {
     const category = await Category.findByPk(id)
+    if (!category) {
+      throw new ErrorResponse('Category does not exist', 404)
+    }
     isAuthorized(req, category)
     category.categoryName = newCategory
     await category.save()
@@ -112,15 +98,7 @@ const categoryPut = async (req, res) => {
       category
     })
   } catch (error) {
-    let returnError = error
-    if (!(error instanceof ErrorResponse)) {
-      console.log(error)
-      returnError = new ErrorResponse('Error trying to update a category', 500, { error })
-    }
-    res.status(returnError.errorType).json({
-      msg: returnError.message,
-      reasons: returnError.reasons
-    })
+    next(error)
   }
 }
 module.exports = {
