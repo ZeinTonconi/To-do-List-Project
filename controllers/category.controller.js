@@ -23,23 +23,19 @@ const categoryGet = async (req, res, next) => {
   const { idUser } = req
   const { id } = req.params
 
-  try {
-    const category = await Category.findOne({
-      where: {
-        id,
-        id_user: idUser
-      }
-    })
-    if (!category) {
-      throw new ErrorResponse('Category does not exist', 404)
+  const category = await Category.findOne({
+    where: {
+      id,
+      id_user: idUser
     }
-
-    res.status(200).json({
-      category
-    })
-  } catch (error) {
-    next(error)
+  })
+  if (!category) {
+    throw new ErrorResponse('Category does not exist', 404)
   }
+
+  res.status(200).json({
+    category
+  })
 }
 
 const categoryPost = async (req, res, next) => {
