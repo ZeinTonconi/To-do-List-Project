@@ -8,9 +8,9 @@ const router = Router()
 
 const use = (fn) => {
   return (req, res, next) => {
-    return Promise.resolve(fn(req, res, next)).catch(next);
-  };
-};
+    return Promise.resolve(fn(req, res, next)).catch(next)
+  }
+}
 
 router.get('/', checkJWT, categoriesGet)
 
