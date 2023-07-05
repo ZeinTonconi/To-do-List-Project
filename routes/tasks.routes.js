@@ -2,7 +2,7 @@
 const { Router } = require('express')
 const { check } = require('express-validator')
 const { imagePost } = require('../controllers/image.controller')
-const { tasksGet, tasksPost, tasksDelete, putTask, putCompleteTask, addTag } = require('../controllers/tasks.controller')
+const { tasksGet, tasksPost, tasksDelete, putTask, putCompleteTask, addTag, deleteTag } = require('../controllers/tasks.controller')
 const { ErrorResponse } = require('../ErrorResponse')
 const { checkJWT } = require('../helpers/check-jwt')
 const { isInDB } = require('../helpers/dbValidator')
@@ -23,8 +23,8 @@ router.post('/', [
     try {
       const { idUser } = req
       if (await isInDB('category', {
-        id: req.body.id_category,
-        id_u: idUser
+        id: req.body.idCategory,
+        id_user: idUser
       })) next()
       else {
         throw new ErrorResponse('Category does not exist', 404)
@@ -37,9 +37,15 @@ router.post('/', [
 
 router.post('/:idTask/tag', [
   checkJWT,
-  check('id_tag', 'Se debe incluir el id del tag').notEmpty(),
+  check('idTag', 'Se debe incluir el id del tag').notEmpty(),
   validateCamp
 ], addTag)
+
+router.delete('/:idTask/tag', [
+  checkJWT,
+  check('idTag', 'Se debe incluir el id del tag').notEmpty(),
+  validateCamp
+], deleteTag)
 
 router.put('/:id', [
   checkJWT,

@@ -147,6 +147,29 @@ const addTag = async (req, res, next) => {
     next(error)
   }
 }
+const deleteTag = async (req, res, next) => {
+  const { idTask } = req.params
+  const { idTag } = req.body
+  try {
+    const task = await Task.findByPk(idTask)
+    const tag = await Tag.findByPk(idTag)
+    if (!task) {
+      throw new ErrorResponse('Task does not exist', 404)
+    }
+    if (!tag) {
+      throw new ErrorResponse('Tag does not exist', 404)
+    }
+    isAuthorized(req, task)
+    isAuthorized(req, tag)
+    await task.removeTag(tag)
+    res.status(201).json({
+      msg: 'The tag has been eliminated',
+      task
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 
 module.exports = {
   tasksGet,
@@ -154,5 +177,6 @@ module.exports = {
   tasksDelete,
   putTask,
   putCompleteTask,
-  addTag
+  addTag,
+  deleteTag
 }
