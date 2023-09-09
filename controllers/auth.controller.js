@@ -18,7 +18,8 @@ const login = async (req, res) => {
     const token = await generateJWT(user.id)
     res.status(200).json({
       msg: 'Logged in',
-      token
+      token,
+      user
     })
   } catch (error) {
     if (error instanceof ErrorResponse) {
@@ -37,13 +38,15 @@ const postUser = async (req, res) => {
   const { email, password } = req.body
   const idUser = ulid()
   try {
-    await User.create({
+    const user = {
       id: idUser,
       email,
       password
-    })
+    }
+    await User.create(user)
     res.status(201).json({
-      msg: 'User Created'
+      msg: 'User Created',
+      user
     })
   } catch (error) {
     console.log(error)
