@@ -44,6 +44,7 @@ const tasksPost = async (req, res, next) => {
   const { descr, idCategory } = req.body
   try {
     const idTask = ulid()
+    const category = await Category.findByPk(idCategory)
     const newTask = await Task.create({
       id: idTask,
       description: descr,
@@ -52,7 +53,8 @@ const tasksPost = async (req, res, next) => {
     })
     res.status(201).json({
       msg: 'Task created',
-      newTask
+      newTask,
+      category
     })
   } catch (error) {
     next(error)
@@ -69,7 +71,7 @@ const tasksDelete = async (req, res, next) => {
       throw new ErrorResponse('Task does not exist', 404)
     }
     isAuthorized(req, task)
-    await Task.destroy(task)
+    await task.destroy()
     res.status(201).json({
       msg: 'The task has been eliminated'
     })
@@ -96,9 +98,11 @@ const putTask = async (req, res, next) => {
     if (newDescri) { task.description = newDescri }
     if (newCategory) { task.id_category = newCategory }
     await task.save()
+    const category = await Category.findByPk(newCategory)
     res.status(200).json({
       msg: 'Task updated',
-      task
+      task,
+      category
     })
   } catch (error) {
     next(error)
