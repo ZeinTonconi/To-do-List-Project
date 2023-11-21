@@ -1,6 +1,7 @@
 const { generateJWT } = require('../helpers/generateJWT')
-const User = require('../models/User')
 const { ulid } = require('ulid')
+
+const User = require('../models/User')
 const { ErrorResponse } = require('../ErrorResponse')
 
 const login = async (req, res) => {
@@ -56,7 +57,17 @@ const postUser = async (req, res) => {
   }
 }
 
+const checkToken = async (req, res) => {
+  const { idUser } = req
+  const user = await User.findByPk(idUser)
+  res.status(200).json({
+    user,
+    token: req.header('keyToken')
+  })
+}
+
 module.exports = {
   login,
-  postUser
+  postUser,
+  checkToken
 }
