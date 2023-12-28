@@ -39,6 +39,47 @@ const tasksGet = async (req, res, next) => {
   }
 }
 
+const tasksGetPagination = async (req, res, next) => {
+  const { idUser } = req
+
+  const page = parseInt(req.query.page)
+  const size = parseInt(req.query.size)
+
+  try {
+    let tasks = await Task.findAll({
+      where: {
+        id_user: idUser
+      },
+      attributes: {
+        exclude: ['id_user']
+      },
+      include: [{
+        model: Tag,
+        through: {
+          attributes: []
+        }
+      },
+      {
+        model: Category,
+        attributes: {
+          exclude: ['id_user']
+        }
+      },
+      {
+        model: Image
+      }
+      ]
+
+    })
+    tasks = tasks.filter((_, index) => Math.floor(index / size) === page)
+    res.status(200).json({
+      tasks
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const tasksPost = async (req, res, next) => {
   const { idUser } = req
   const { descr, idCategory } = req.body
@@ -177,6 +218,7 @@ const deleteTag = async (req, res, next) => {
 
 module.exports = {
   tasksGet,
+  tasksGetPagination,
   tasksPost,
   tasksDelete,
   putTask,

@@ -2,7 +2,7 @@
 const { Router } = require('express')
 const { check } = require('express-validator')
 const { imagePost } = require('../controllers/image.controller')
-const { tasksGet, tasksPost, tasksDelete, putTask, putCompleteTask, addTag, deleteTag } = require('../controllers/tasks.controller')
+const { tasksGet, tasksPost, tasksDelete, putTask, putCompleteTask, addTag, deleteTag, tasksGetPagination } = require('../controllers/tasks.controller')
 const { ErrorResponse } = require('../ErrorResponse')
 const { checkJWT } = require('../helpers/check-jwt')
 const { isInDB } = require('../helpers/dbValidator')
@@ -13,6 +13,10 @@ const router = Router()
 router.get('/', [
   checkJWT
 ], tasksGet)
+
+router.get('/pagination', [
+  checkJWT
+], tasksGetPagination)
 
 router.post('/', [
   checkJWT,
