@@ -1,7 +1,8 @@
 const { Router } = require('express')
 const { check } = require('express-validator')
-const { login, postUser } = require('../controllers/auth.controller')
+const { login, postUser, checkToken } = require('../controllers/auth.controller')
 const { validateCamp } = require('../middlewares/validateCamps')
+const { checkJWT } = require('../helpers/check-jwt')
 
 const router = Router()
 
@@ -16,5 +17,9 @@ router.post('/create', [
   check('password', 'You need a Password').notEmpty(),
   validateCamp
 ], postUser)
+
+router.get('/check-token', [
+  checkJWT
+], checkToken)
 
 module.exports = router

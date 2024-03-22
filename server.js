@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const sequelize = require('./database/config.js')
+const fileUpload = require('express-fileupload')
 const { errorHandler } = require('./middlewares/errorHandler')
 
 require('./models/index.models')
@@ -38,6 +39,9 @@ class Server {
   }
 
   middlewares () {
+    this.app.use(fileUpload({
+      createParentPath: true
+    }))
     this.app.use(cors())
 
     this.app.use(express.json())
